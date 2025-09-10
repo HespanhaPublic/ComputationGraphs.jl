@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Examples · ComputationGraphs</title><meta name="title" content="Examples · ComputationGraphs"/><meta property="og:title" content="Examples · ComputationGraphs"/><meta property="twitter:title" content="Examples · ComputationGraphs"/><meta name="description" content="Documentation for ComputationGraphs."/><meta property="og:description" content="Documentation for ComputationGraphs."/><meta property="twitter:description" content="Documentation for ComputationGraphs."/><meta property="og:url" content="https://documenter.juliadocs.org/stable/examples.html"/><meta property="twitter:url" content="https://documenter.juliadocs.org/stable/examples.html"/><link rel="canonical" href="https://documenter.juliadocs.org/stable/examples.html"/><script data-outdated-warner src="assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="search_index.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="index.html">ComputationGraphs</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="index.html">Home</a></li><li><span class="tocitem">User manual</span><ul><li><a class="tocitem" href="man_guide.html">Basics</a></li><li><a class="tocitem" href="man_differentiation.html">Symbolic differentiation</a></li><li><a class="tocitem" href="man_recipes.html">Recipes</a></li><li><a class="tocitem" href="man_code_generation.html">Code generation</a></li><li class="is-active"><a class="tocitem" href="examples.html">Examples</a><ul class="internal"><li><a class="tocitem" href="#Contents"><span>Contents</span></a></li><li><a class="tocitem" href="#Adam&#39;s-method-for-optimization"><span>Adam&#39;s method for optimization</span></a></li><li><a class="tocitem" href="#Adam&#39;s-method-with-projection"><span>Adam&#39;s method with projection</span></a></li><li><a class="tocitem" href="#Neural-network-training"><span>Neural network training</span></a></li></ul></li></ul></li><li><span class="tocitem">Reference</span><ul><li><a class="tocitem" href="lib_representation.html">Representation of computation graphs</a></li><li><a class="tocitem" href="lib_public.html">API</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">User manual</a></li><li class="is-active"><a href="examples.html">Examples</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href="examples.html">Examples</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/HespanhaPublic/ComputationGraphs.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/HespanhaPublic/ComputationGraphs.jl/blob/main/docs/src/examples.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Examples"><a class="docs-heading-anchor" href="#Examples">Examples</a><a id="Examples-1"></a><a class="docs-heading-anchor-permalink" href="#Examples" title="Permalink"></a></h1><p>Examples to illustrate the use of <code>ComputationGraphs</code>.</p><h2 id="Contents"><a class="docs-heading-anchor" href="#Contents">Contents</a><a id="Contents-1"></a><a class="docs-heading-anchor-permalink" href="#Contents" title="Permalink"></a></h2><ul><li><a href="examples.html#Contents">Contents</a></li><li><a href="examples.html#Adam&#39;s-method-for-optimization">Adam&#39;s method for optimization</a></li><li><a href="examples.html#Adam&#39;s-method-with-projection">Adam&#39;s method with projection</a></li><li><a href="examples.html#Neural-network-training">Neural network training</a></li></ul><h2 id="Adam&#39;s-method-for-optimization"><a class="docs-heading-anchor" href="#Adam&#39;s-method-for-optimization">Adam&#39;s method for optimization</a><a id="Adam&#39;s-method-for-optimization-1"></a><a class="docs-heading-anchor-permalink" href="#Adam&#39;s-method-for-optimization" title="Permalink"></a></h2><p>Adam&#39;s gradient-based optimization can be easily implement using the recipe <a href="lib_public.html#ComputationGraphs.adam!">adam!</a> which includes all the &quot;messy&quot; formulas. In this example, we use Adam&#39;s method to minimize a quadratic criterion of the form</p><p class="math-container">\[    J(x) = \| A\, x -b \|^2\]</p><p>with respect to <span>$x$</span>. To construct of the computation graph that accomplishes this, we use:</p><pre><code class="language-julia hljs">using ComputationGraphs
+graph = ComputationGraph{Float64}()
+A = variable(graph, 400, 300)
+x = variable(graph, 300)
+b = variable(graph, 400)
+loss = @add graph norm2(times(A, x) - b)
+theta = (;x,)
+(;  eta, beta1, beta2, epsilon,
+    init_state, state, next_state,
+    next_theta, gradients) = adam!(graph; loss, theta)</code></pre><p>With this graph in place, the actual optimization can be carried out as follows:</p><ol><li>We start by initializing the Adam&#39;s parameters</li></ol><pre><code class="language-julia hljs">set!(graph, eta, 2e-2)
+set!(graph, beta1, 0.9)
+set!(graph, beta2, 0.999)
+set!(graph, epsilon, 1e-8)</code></pre><ol><li>We (randomly) initialize the problem data (freeing the random see for repeatability)</li></ol><pre><code class="language-julia hljs">using Random
+Random.seed!(0)
+set!(graph, A, randn(size(A)))
+set!(graph, b, randn(size(b)))</code></pre><ol><li>We then (randomly) initialize the parameters to optimize (freeing the random see for repeatability)</li></ol><pre><code class="language-julia hljs">Random.seed!(0)
+init_x=randn(Float64,size(x))
+set!(graph, x, init_x)</code></pre><ol><li>We then initialize Adam&#39;s internal state</li></ol><pre><code class="language-julia hljs">copyto!(graph, state, init_state)</code></pre><ol><li>We are now ready to run Adam&#39;s iterations:</li></ol><pre><code class="language-julia hljs">using BenchmarkTools, Plots
+l=get(graph,loss)
+println(&quot;initial loss: &quot;, l)
+all=(;state...,theta...)
+next_all=(;next_state...,next_theta...)
+nIterations=1000
+losses=Vector{Float64}(undef,nIterations)
+bmk = @benchmark for i in 1:$nIterations
+    compute!($graph, $next_all)
+    copyto!($graph, $all, $next_all)
+    $l=get($graph, $loss)
+    $losses[i]=$l[1]
+end  setup =( # reinitialize x and solver for each new sample
+        set!($graph, $x, $init_x), copyto!($graph, $state, $init_state)
+    ) evals=1 # a single evaluation per sample
+println(&quot;final loss: &quot;, l)
+plt=Plots.plot(losses,yaxis=:log,ylabel=&quot;loss&quot;,xlabel=&quot;iteration&quot;,label=&quot;&quot;,size=(750,400))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">initial loss: fill(125008.67163886719)
+final loss: fill(116.63722408535794)
+GKS: cannot open display - headless operation mode active
+BenchmarkTools.Trial: 92 samples with 1 evaluation per sample.
+ Range <span class="sgr90">(</span><span class="sgr36"><span class="sgr1">min</span></span> … <span class="sgr35">max</span><span class="sgr90">):  </span><span class="sgr36"><span class="sgr1">32.581 ms</span></span> … <span class="sgr35"> 35.613 ms</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>min … max<span class="sgr90">): </span>0.00% … 0.00%
+ Time  <span class="sgr90">(</span><span class="sgr34"><span class="sgr1">median</span></span><span class="sgr90">):     </span><span class="sgr34"><span class="sgr1">32.699 ms               </span></span><span class="sgr90">┊</span> GC <span class="sgr90">(</span>median<span class="sgr90">):    </span>0.00%
+ Time  <span class="sgr90">(</span><span class="sgr32"><span class="sgr1">mean</span></span> ± <span class="sgr32">σ</span><span class="sgr90">):   </span><span class="sgr32"><span class="sgr1">32.764 ms</span></span> ± <span class="sgr32">361.001 μs</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>mean ± σ<span class="sgr90">):  </span>0.00% ± 0.00%
+
+   ▄█▃<span class="sgr34">▃</span>▁<span class="sgr32"> </span>                                                      
+  ▆███<span class="sgr34">█</span>█<span class="sgr32">▇</span>▇▄▃▄▁▁▃▁▁▁▁▃▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▃ ▁
+  32.6 ms<span class="sgr90">         Histogram: frequency by time</span>         34.4 ms <span class="sgr1">&lt;</span>
+
+ Memory estimate<span class="sgr90">: </span><span class="sgr33">0 bytes</span>, allocs estimate<span class="sgr90">: </span><span class="sgr33">0</span>.</code></pre><p>As expected for a convex optimization, convergence is pretty smooth:</p><p><img src="example1.png" alt="convergence plot"/></p><div class="admonition is-info" id="Note-7e5dbe5686496e66"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-7e5dbe5686496e66" title="Permalink"></a></header><div class="admonition-body"><p>For <code>@benchmark</code> to reflect the time an actual optimization, we reset the optimization variable <code>x</code> and the solver&#39;s state at the start of each sample (using <code>@benchmark</code>&#39;s <code>setup</code> code).</p></div></div><h2 id="Adam&#39;s-method-with-projection"><a class="docs-heading-anchor" href="#Adam&#39;s-method-with-projection">Adam&#39;s method with projection</a><a id="Adam&#39;s-method-with-projection-1"></a><a class="docs-heading-anchor-permalink" href="#Adam&#39;s-method-with-projection" title="Permalink"></a></h2><p>Suppose now that we wanted to add a &quot;projection&quot; to Adam&#39;s method to keep all entries of <code>x</code> positive. This could be done by simply modifying the <code>next_theta</code> produced by Adam to force all the entries of <code>next_step.x</code> to be positive, using the <code>relu</code> function:</p><pre><code class="language-julia hljs">next_theta = (x=relu(graph,next_theta.x),)</code></pre><p>We can now repeat the previous steps (reinitializing everything for a fresh start):</p><pre><code class="language-julia hljs">set!(graph, x, init_x)
+copyto!(graph, state, init_state)
+l=get(graph,loss)
+println(&quot;initial loss: &quot;, l)
+all=(;state...,theta...)
+next_all=(;next_state...,next_theta...)
+nIterations=1000
+losses=Vector{Float64}(undef,nIterations)
+bmk = @benchmark for i in 1:$nIterations
+    compute!($graph, $next_all)
+    copyto!($graph, $all, $next_all)
+    $l=get($graph,$loss)
+    $losses[i]=$l[1]
+end  setup =( # reinitialize x and solver for each new sample
+        set!($graph, $x, $init_x), copyto!($graph, $state, $init_state)
+    ) evals=1 # a single evaluation per sample
+println(&quot;final loss: &quot;, l)
+plt=Plots.plot(losses,yaxis=:log,ylabel=&quot;loss&quot;,xlabel=&quot;iteration&quot;,label=&quot;&quot;,size=(750,400))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">initial loss: fill(125008.67163886719)
+final loss: fill(249.7135504173925)
+BenchmarkTools.Trial: 91 samples with 1 evaluation per sample.
+ Range <span class="sgr90">(</span><span class="sgr36"><span class="sgr1">min</span></span> … <span class="sgr35">max</span><span class="sgr90">):  </span><span class="sgr36"><span class="sgr1">32.870 ms</span></span> … <span class="sgr35"> 34.362 ms</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>min … max<span class="sgr90">): </span>0.00% … 0.00%
+ Time  <span class="sgr90">(</span><span class="sgr34"><span class="sgr1">median</span></span><span class="sgr90">):     </span><span class="sgr34"><span class="sgr1">33.025 ms               </span></span><span class="sgr90">┊</span> GC <span class="sgr90">(</span>median<span class="sgr90">):    </span>0.00%
+ Time  <span class="sgr90">(</span><span class="sgr32"><span class="sgr1">mean</span></span> ± <span class="sgr32">σ</span><span class="sgr90">):   </span><span class="sgr32"><span class="sgr1">33.058 ms</span></span> ± <span class="sgr32">172.747 μs</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>mean ± σ<span class="sgr90">):  </span>0.00% ± 0.00%
+
+           ▂▄ ▄█▄<span class="sgr34"> </span>▂ <span class="sgr32">█</span> ▂▄                                       
+  ▆▁▆▆▄██▆███████<span class="sgr34">█</span>█▄<span class="sgr32">█</span>▁███▁█▁█▁█▄▁▄▄▁▆▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▄▁▁▁▁▁▁▁▁▄ ▁
+  32.9 ms<span class="sgr90">         Histogram: frequency by time</span>         33.5 ms <span class="sgr1">&lt;</span>
+
+ Memory estimate<span class="sgr90">: </span><span class="sgr33">0 bytes</span>, allocs estimate<span class="sgr90">: </span><span class="sgr33">0</span>.</code></pre><p><img src="example2.png" alt="convergence plot"/></p><div class="admonition is-info" id="Note-7e5dbe5686496e66"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-7e5dbe5686496e66" title="Permalink"></a></header><div class="admonition-body"><p>For <code>@benchmark</code> to reflect the time an actual optimization, we reset the optimization variable <code>x</code> and the solver&#39;s state at the start of each sample (using <code>@benchmark</code>&#39;s <code>setup</code> code).</p></div></div><h2 id="Neural-network-training"><a class="docs-heading-anchor" href="#Neural-network-training">Neural network training</a><a id="Neural-network-training-1"></a><a class="docs-heading-anchor-permalink" href="#Neural-network-training" title="Permalink"></a></h2><p>In this example, we combine the two recipes <a href="lib_public.html#ComputationGraphs.denseChain!">denseChain!</a> and <a href="lib_public.html#ComputationGraphs.adam!">adam!</a> to train and query a dense forward neural network of form:</p><pre><code class="language-julia hljs">    x[1]   = input
+    x[2]   = activation(W[1] * x[1] + b[1])
+    ...
+    x[N-1] = activation(W[N-2] * x[N-2] + b[N-2])
+    output = W[N-1] * x[N-1] + b[N-1]               # no activation in the last layer
+    loss = some_loss_function(output-reference)</code></pre><p>As in <a href="man_recipes.html#Neural-network-recipes">Neural-network recipes</a>, our goal is to train a neural network whose input is an angle in the [0,2*pi] range with two outputs that return the sine and cosine of the angle. To accomplish this will use a network with 1 input, 2 output, a few hidden layers, and <code>relu</code> activation functions.</p><ol><li>We start by using <a href="lib_public.html#ComputationGraphs.denseChain!">denseChain!</a> to construct a graph that performs all the computations needed</li></ol><p>to do inference and compute the (training) loss function for the network. The computation graph will support:</p><ul><li><em>inference</em>, i.e., compute the output for a given input;</li><li><em>training</em>, i.e., minimize the loss for a given set of inputs and desired outputs. For training</li></ul><p>we will use a large batch size, but for inference we will only provide one input at a time.</p><pre><code class="language-julia hljs">using ComputationGraphs, Random
+graph=ComputationGraph{Float32}()
+hiddenLayers=[30,20,30]
+(; inference, training, theta)=denseChain!(graph;
+        nNodes=[1,hiddenLayers...,2],
+        inferenceBatchSize=1,
+        trainingBatchSize=5_000,
+        activation=ComputationGraphs.relu,
+        loss=:mse)
+println(&quot;graph with &quot;, length(graph), &quot; nodes and &quot;,ComputationGraphs.memory(graph),&quot; bytes&quot;)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">graph with 30 nodes and 3367440 bytes</code></pre><pre><code class="nohighlight hljs">where
+
++ `nNodes` is a vector with the number of nodes in each layer, starting from the
+        input and ending at the output layer.
++ `inferenceBatchSize` is the number of inputs for each inference batch.
++ `trainingBatchSize` is the number of inputs for each training batch.
++ `activation`: is the activation function.
++ `loss` defines the loss to be the mean square error.
+
+and the returned tuple includes
+
++ `inference::NamedTuple`: named tuple with the inference nodes:
+        + `input` NN input for inference
+        + `output` NN output for inference
+
+`+ training::NamedTuple`: named tuple with the training nodes:
+        + `input` NN input for training
+        + `output` NN output for training
+        + `reference` NN desired output for training
+        + `loss` NN loss for training
+
++ `theta::NamedTuple`: named tuple with the NN parameters (all the matrices W and b)</code></pre><ol><li>We then use the <a href="lib_public.html#ComputationGraphs.adam!">adam!</a> recipe add to the graph the computation needed to optimize the weights.</li></ol><pre><code class="language-julia hljs">(;  eta, beta1, beta2, epsilon,
+    init_state, state, next_state,
+    next_theta, gradients) = adam!(graph; loss=training.loss, theta=theta)
+println(&quot;graph with &quot;, length(graph), &quot; nodes and &quot;,ComputationGraphs.memory(graph),&quot; bytes&quot;)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">graph with 195 nodes and 8327772 bytes</code></pre><pre><code class="nohighlight hljs">where we passed to [adam!](@ref) the nodes that correspond to the neural network loss and use
+the neural network parameters as the optimization variables.
+
+In return, we get back the nodes with Adam&#39;s parameters as well as the nodes needed for the
+algorithm&#39;s update.</code></pre><ol><li>We initialize the network weights with random (but repeatable) values. We use a function for this, to be able to call it many times.</li></ol><pre><code class="language-julia hljs">function init_weights(graph,theta)
+    Random.seed!(0)
+    for k in eachindex(theta)
+        set!(graph,theta[k],0.2*randn(Float32,size(theta[k])))
+    end
+end</code></pre><ol><li><p>We are almost ready to use Adam&#39;s iterative algorithm, similarly to what was done in <a href="examples.html#Adam&#39;s-method-for-optimization">Adam&#39;s method for optimization</a>. However, and as commonly done in training neural networks, we will use a different random set of training data at each iteration.</p><p>To this effect, we create a &quot;data-loader&quot; function that will create a new set of data at each iteration:</p></li></ol><pre><code class="language-julia hljs">function dataLoader!(input,output)
+    for k in eachindex(input)
+        input[k]=(2*pi)*rand(Float32)
+        output[1,k]=sin(input[k])
+        output[2,k]=cos(input[k])
+    end
+end</code></pre><ol><li>Now we are indeed ready for training:</li></ol><pre><code class="language-julia hljs">using BenchmarkTools, Plots
+# Initialize Adam&#39;s parameters
+set!(graph, eta, 8e-4)
+set!(graph, beta1, 0.9)
+set!(graph, beta2, 0.999)
+set!(graph, epsilon, 1e-8)
+# create arrays for batch data
+input=Array{Float32}(undef,size(training.input))
+output=Array{Float32}(undef,size(training.reference))
+# Create array to save losses
+nIterations=1_000
+losses=Vector{Float32}(undef,nIterations)
+# Adam iteration
+all=(;state...,theta...)
+next_all=(;next_state...,next_theta...)
+bmk = BenchmarkTools.@benchmark for i in 1:$nIterations
+    dataLoader!($input,$output)
+    set!($graph,$training.input,$input)
+    set!($graph,$training.reference,$output)
+    compute!($graph, $next_all)
+    copyto!($graph, $all, $next_all)
+    l=get($graph, $training.loss)
+    $losses[i]=l[1]
+end  setup =( # reinitialize NN weights and solver for each new sample
+        init_weights($graph,$theta), copyto!($graph, $state, $init_state)
+    ) evals=1 # a single evaluation per sample
+println(&quot;final loss: &quot;, get(graph,training.loss))
+plt=Plots.plot(losses,yaxis=:log,
+    ylabel=&quot;loss&quot;,xlabel=&quot;iteration&quot;,label=&quot;&quot;,size=(750,400))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">final loss: fill(9.6966294f-5)
+BenchmarkTools.Trial: 3 samples with 1 evaluation per sample.
+ Range <span class="sgr90">(</span><span class="sgr36"><span class="sgr1">min</span></span> … <span class="sgr35">max</span><span class="sgr90">):  </span><span class="sgr36"><span class="sgr1">3.494 s</span></span> … <span class="sgr35">  3.516 s</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>min … max<span class="sgr90">): </span>0.00% … 0.00%
+ Time  <span class="sgr90">(</span><span class="sgr34"><span class="sgr1">median</span></span><span class="sgr90">):     </span><span class="sgr34"><span class="sgr1">3.507 s              </span></span><span class="sgr90">┊</span> GC <span class="sgr90">(</span>median<span class="sgr90">):    </span>0.00%
+ Time  <span class="sgr90">(</span><span class="sgr32"><span class="sgr1">mean</span></span> ± <span class="sgr32">σ</span><span class="sgr90">):   </span><span class="sgr32"><span class="sgr1">3.506 s</span></span> ± <span class="sgr32">11.330 ms</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>mean ± σ<span class="sgr90">):  </span>0.00% ± 0.00%
+
+  <span class="sgr34">█</span>                             <span class="sgr32"> </span>  █                      █ 
+  <span class="sgr34">█</span>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁<span class="sgr32">▁</span>▁▁█▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁█ ▁
+  3.49 s<span class="sgr90">         Histogram: frequency by time</span>        3.52 s <span class="sgr1">&lt;</span>
+
+ Memory estimate<span class="sgr90">: </span><span class="sgr33">0 bytes</span>, allocs estimate<span class="sgr90">: </span><span class="sgr33">0</span>.</code></pre><p>In spite of not being a convex optimization, convergence is still pretty good (after carefully choosing the step size <code>eta</code>).</p><p><img src="example3a.png" alt="convergence plot"/></p><ol><li>We can now check how the neural network is doing at computing the sine and cosine:</li></ol><pre><code class="language-julia hljs">angles=0:.01:2*pi
+outputs=Array{Float32}(undef,2,length(angles))
+for (k,angle) in enumerate(angles)
+    set!(graph,inference.input,[angle])
+    (outputs[1,k],outputs[2,k])=get(graph,inference.output)
+end
+plt=Plots.plot(angles,outputs&#39;,
+    xlabel=&quot;angle&quot;,ylabel=&quot;outputs&quot;,label=[&quot;sin&quot; &quot;cos&quot;],size=(750,400))</code></pre><p>and it looks like the network is doing quite well at computing the sine and cosine:</p><p><img src="example3b.png" alt="inference"/></p><div class="admonition is-warning" id="Warning-3653d1b316b02810"><header class="admonition-header">Warning<a class="admonition-anchor" href="#Warning-3653d1b316b02810" title="Permalink"></a></header><div class="admonition-body"><p>The code above does inference one angle at a time, which is quite inefficient. This could be avoided, by setting <code>inferenceBatchSize</code> to a value larger than 1.</p></div></div></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="man_code_generation.html">« Code generation</a><a class="docs-footer-nextpage" href="lib_representation.html">Representation of computation graphs »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Wednesday 10 September 2025 21:29">Wednesday 10 September 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
