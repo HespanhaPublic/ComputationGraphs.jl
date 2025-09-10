@@ -2,17 +2,21 @@
 
 `ComputationGraphs` is about improving the speed (and energy consumption) of numerical computations
 that need to be performed repeatedly, e.g.,
+
 + one iteration of a numerical optimization algorithm, 
 + one iteration of a filtering/smoothing algorithm,
 + repeated calls to a classification algorithm on different samples, etc.
 
 The computation to be performed is encoded into *Computation Graph* that describes dependencies
 between numerical operations and permits several forms of "run-time" optimization, including:
+
 + allocation-free operation
 + (partial) re-use of perviously performed computations
 + symbolic differentiation
 + algebraic simplification of symbolic expression
 + parallelization
+
+See the package [Documentation] and [Examples] for details.
 
 A MATLAB implementation of *Computation Graphs* is discussed in
 
@@ -21,3 +25,18 @@ A MATLAB implementation of *Computation Graphs* is discussed in
     Nash equilibria. Mathematical Programming Computation, 14:451—496, Sep. 2022.
     [pdf](http://www.ece.ucsb.edu/~hespanha/published/tenscalc_journal-svjour3.pdf)
 
+## Installation
+
+1) Add `HespanhaRegistry` to julia's packet registry to get packages not available in the global registry:
+
+    ```julia
+    using Pkg
+    pkg"registry add General https://github.com/HespanhaPublic/HespanhaRegistry.jl"
+    ```
+
+2) Install package as usual:
+
+    ```julia
+    using Pkg
+    pkg"add ComputationGraphs.jl
+    ```

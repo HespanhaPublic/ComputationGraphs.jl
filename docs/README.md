@@ -45,9 +45,18 @@
     !! note
         Changed workflow to trigger on tags matching 'docs*', for example `docs-v0.0.0`
 
-        To trigger the workflow:
+        To trigger the workflow from VS-Code:
+
         1) create tag (source control/.../Tags/Create Tag)
         2) push tags (Ctrl+Shift+P / Git: Push Tags)
+
+        To trigger the workflow from the command line:
+
+        ```bash
+        git tag docs-v0.0.0
+        git push origin --tags
+        ```
+
 
 5) The documentation will appear in the branch `gh-pages`
 

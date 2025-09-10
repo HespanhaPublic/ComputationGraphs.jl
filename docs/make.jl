@@ -57,7 +57,7 @@ makedocs(
 )
 
 deploydocs(
-    repo="github.com/hespanha/ComputationGraphs.git",
+    repo="github.com/HespanhaPublic/ComputationGraphs.jl.git",
     branch="gh-pages", # branch where the generated documentation, using default
     target="build",    # directory to be deployed, using default
     deploy_config=Documenter.GitHubActions(),
