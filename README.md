@@ -16,9 +16,9 @@ between numerical operations and permits several forms of "run-time" optimizatio
 + algebraic simplification of symbolic expression
 + parallelization
 
-See the package [Documentation]() and [Examples]() for details.
-
-[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://HespanhaPublic.github.io/ComputationGraphs.jl/stable)
+See the package [Documentation](https://hespanhapublic.github.io/ComputationGraphs.jl/stable) and
+[Examples](https://hespanhapublic.github.io/ComputationGraphs.jl/stable/examples.html#Examples) for
+more infomation. [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://HespanhaPublic.github.io/ComputationGraphs.jl/stable)
 
 A MATLAB implementation of *Computation Graphs* is discussed in
 
