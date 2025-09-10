@@ -28,9 +28,7 @@ makedocs(
         canonical="https://documenter.juliadocs.org/stable/",
         #assets=["assets/favicon.ico"],
         mathengine=Documenter.HTMLWriter.MathJax3(),
-        highlights=["yaml"],
-        ansicolor=true,
-        size_threshold=500000,
+        highlights=["yaml"], size_threshold=500000,
         size_threshold_warn=200000,
         #size_threshold_ignore=[
         #    "examples.md",
@@ -56,11 +54,15 @@ makedocs(
     warnonly=true,  # simply prints a warning on error
 )
 
+#https://documenter.juliadocs.org/stable/lib/public/#Documenter.deploydocs
 deploydocs(
     repo="github.com/HespanhaPublic/ComputationGraphs.jl.git",
     branch="gh-pages", # branch where the generated documentation, using default
     target="build",    # directory to be deployed, using default
     deploy_config=Documenter.GitHubActions(),
+    versions=["stable" => "v^", "v#.#.#", "dev" => "dev"], # default
     #push_preview=true,
-    push_preview=false
+    push_preview=false,
+    # see https://documenter.juliadocs.org/stable/man/hosting/#Documentation-Versions
+    tag_prefix="docs-", # only version tags with that prefix will trigger deployment
 )

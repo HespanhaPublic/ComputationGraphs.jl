@@ -43,7 +43,7 @@
         The first time seems to take much longer to run
 
     !! note
-        Changed workflow to trigger on tags matching 'docs*', for example `docs-v0.0.0`
+        Changed workflow to trigger on tags matching 'v*docs', for example `docs-v0.0.0+take1`
 
         To trigger the workflow from VS-Code:
 
@@ -53,10 +53,27 @@
         To trigger the workflow from the command line:
 
         ```bash
-        git tag docs-v0.0.0
+        git tag docs-v0.0.0+take1
         git push origin --tags
         ```
 
+    !!! attention
+
+    When make.jl is triggered by a tag, GIT_REF is constructed from the tag and must be a valid version name
+
+    See:
+
+    + "GITHUB_REF: must match the devbranch keyword to deploydocs, alternatively correspond to a git tag."
+    
+        (https://documenter.juliadocs.org/stable/man/hosting/#Documenter.GitHubActions)
+
+    + "devbranch is the branch that "tracks" the in-development version of the generated
+      documentation. By default Documenter tries to figure this out using git. Can be set
+      explicitly as a string (typically "master" or "main")."
+
+        (https://documenter.juliadocs.org/stable/lib/public/#Documenter.deploydocs)
+
+    + https://github.com/JuliaDocs/Documenter.jl/issues/1230#issuecomment-579450827
 
 5) The documentation will appear in the branch `gh-pages`
 
