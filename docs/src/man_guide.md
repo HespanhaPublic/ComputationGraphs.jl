@@ -75,7 +75,7 @@ The computation graph above can be created using the following code
 
 ```@example guide1
 using ComputationGraphs
-graph = ComputationGraph{Float64}()
+graph = ComputationGraph(Float64)
 A = variable(graph, 4, 3)
 x = variable(graph, 3)
 b = variable(graph, 4)
@@ -203,7 +203,7 @@ the operation $$\|Ax-b\|$$ for very large matrices/vectors only takes a few nano
 
 ```@example
 using ComputationGraphs, BenchmarkTools
-graph = ComputationGraph{Float64}()
+graph = ComputationGraph(Float64)
 A = variable(graph, rand(Float64,4000, 3000))
 x = variable(graph, rand(Float64,3000))
 b = variable(graph, rand(Float64,4000))
@@ -218,7 +218,7 @@ actually redo the computations:
 
 ```@example
 using ComputationGraphs, BenchmarkTools
-graph = ComputationGraph{Float64}()
+graph = ComputationGraph(Float64)
 A = variable(graph, rand(Float64,4000, 3000))
 x = variable(graph, rand(Float64,3000))
 b = variable(graph, rand(Float64,4000))
@@ -282,7 +282,7 @@ The following examples illustrate this: In the first case, the value of `x` is s
 
 ```@example guide2
 using ComputationGraphs, BenchmarkTools
-graph = ComputationGraph{Float64}()
+graph = ComputationGraph(Float64)
 A = variable(graph, rand(Float64,4000, 3000))
 x = variable(graph, rand(Float64,3000))
 b = variable(graph, rand(Float64,4000))

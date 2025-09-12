@@ -21,7 +21,7 @@ with a loss function of
 ```
     
 # Parameters:
-+ `graph::ComputationGraph{TypeValue}`; Computation graph that is updated "in-place" by adding to it
++ `graph::ComputationGraph`; Computation graph that is updated "in-place" by adding to it
         all the nodes needed to perform one step of gradient descent.
 
 + `nNodes::Vector{Int}`: Vector with the number of nodes in each layer, starting from the
@@ -65,7 +65,7 @@ with a loss function of
 
 ```julia
 using ComputationGraphs, Random
-graph=ComputationGraph{Float32}()
+graph=ComputationGraph(Float32)
 (; inference, training, theta)=denseChain!(graph; 
         nNodes=[1,20,20,20,2], inferenceBatchSize=1, trainingBatchSize=3,
         activation=ComputationGraphs.relu, loss=:mse)
@@ -92,16 +92,16 @@ println("inputs = ",input,", loss = ",loss)
 ```
 """
 function denseChain!(
-    graph::ComputationGraph{TypeValue};
+    graph::ComputationGraph;
     nNodes::Vector{Int}=Int[],
-    W::Vector{TypeArray{TypeValue,2}}=TypeArray{TypeValue,2}[],
-    b::Vector{TypeArray{TypeValue,1}}=TypeArray{TypeValue,1}[],
+    W::Vector{M}=Matrix{graph.TypeValue}[],
+    b::Vector{V}=Vector{graph.TypeValue}[],
     inferenceBatchSize::Int=1,
     trainingBatchSize::Int=0,
     activation::Function=ComputationGraphs.relu,
     loss::Symbol=:mse,
     code::Union{Code,Nothing}=nothing,
-) where {TypeValue}
+) where {M<:AbstractMatrix,V<:AbstractVector}
     # NN parameters
     if isempty(nNodes)
         @assert !isempty(W) "nNodes is empty and cannot be deduced from W"
@@ -192,7 +192,7 @@ function denseChain!(
     if trainingBatchSize > 0
         trainingOutput = trainingX
         difference = @add graph trainingOutput - trainingReference
-        len::TypeValue = length(difference)
+        len::graph.TypeValue = length(difference)
         if loss == :sse
             trainingLoss = norm2(graph, difference)
         elseif loss == :mse

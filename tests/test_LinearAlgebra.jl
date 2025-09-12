@@ -9,7 +9,7 @@ using Test
 
 BenchmarkTools.DEFAULT_PARAMETERS.seconds = 3
 @testset "test_LinearAlgebra: norm2(constant)" begin
-    graph = ComputationGraph{Float64}()
+    graph = ComputationGraph(Float64)
 
     x_ = [1.0, 2.0, 3.0]
     x = constant(graph, x_)
@@ -40,7 +40,7 @@ BenchmarkTools.DEFAULT_PARAMETERS.seconds = 3
 end
 
 @testset "test_LinearAlgebra: norm2(variable)" begin
-    graph = ComputationGraph{Float64}()
+    graph = ComputationGraph(Float64)
 
     x_ = [1.0, 2.0, 3.0]
     x = variable(graph, size(x_))
@@ -58,7 +58,7 @@ end
 end
 
 @testset "test_LinearAlgebra: adjoint" begin
-    graph = ComputationGraph{Float64}()
+    graph = ComputationGraph(Float64)
 
     x_ = [1.0, 2.0, 3.0]
     x = constant(graph, x_)
@@ -86,7 +86,7 @@ end
 end
 
 @testset "test_LinearAlgebra: column/sumColumns" begin
-    graph = ComputationGraph{Float64}()
+    graph = ComputationGraph(Float64)
 
     A_ = [1.0 2.0; 3.0 4.0; 5.0 6.0]
     A = constant(graph, A_)
@@ -117,7 +117,7 @@ end
 end
 
 @testset "test_LinearAlgebra: +(constant,zero)" begin
-    graph = ComputationGraph{Float64}()
+    graph = ComputationGraph(Float64)
 
     x_ = [1.0, 2.0, 3.0]
     x = constant(graph, x_)
@@ -143,7 +143,7 @@ end
 end
 
 @testset "test_LinearAlgebra: +(constant,constant)" begin
-    graph = ComputationGraph{Float64}()
+    graph = ComputationGraph(Float64)
 
     x_ = [1.0, 2.0, 3.0]
     y_ = [4.0, 5.0, 6.0]
@@ -170,7 +170,7 @@ end
 end
 
 @testset "test_LinearAlgebra: -(constant,constant)" begin
-    graph = ComputationGraph{Float64}()
+    graph = ComputationGraph(Float64)
 
     x_ = [1.0, 2.0, 3.0]
     y_ = [4.0, 5.0, 6.0]
@@ -195,7 +195,7 @@ end
 end
 
 @testset "test_LinearAlgebra: scalarPlus" begin
-    graph = ComputationGraph{Float64}()
+    graph = ComputationGraph(Float64)
 
     x_ = 1.0
     y_ = [4.0, 5.0, 6.0]
@@ -221,7 +221,7 @@ end
 end
 
 @testset "test_LinearAlgebra: columnPlus" begin
-    graph = ComputationGraph{Float64}()
+    graph = ComputationGraph(Float64)
 
     x_ = [1.0, 2.0]
     y_ = [4.0 5.0 6.0; 7.0 8.0 9.0]
@@ -255,7 +255,7 @@ end
 end
 
 @testset "test_LinearAlgebra: rowPlus" begin
-    graph = ComputationGraph{Float64}()
+    graph = ComputationGraph(Float64)
 
     x_ = [1.0, 2.0, 3.0]
     y_ = [4.0 5.0 6.0; 7.0 8.0 9.0]
@@ -289,7 +289,7 @@ end
 end
 
 @testset "test_LinearAlgebra: scalarTimes(constant,constant)" begin
-    graph = ComputationGraph{Float64}()
+    graph = ComputationGraph(Float64)
 
     x_ = 2.0
     y_ = [4.0, 5.0, 6.0]
@@ -321,7 +321,7 @@ end
 end
 
 @testset "test_LinearAlgebra: pointTimes(constant,constant) & pointDivision" begin
-    graph = ComputationGraph{Float64}()
+    graph = ComputationGraph(Float64)
 
     x_ = [1.0, 2.0, 3.0]
     y_ = [4.0, 5.0, 6.0]
@@ -354,7 +354,7 @@ end
 end
 
 @testset "test_LinearAlgebra: times(constant,constant)" begin
-    graph = ComputationGraph{Float64}()
+    graph = ComputationGraph(Float64)
 
     x_ = [1.0 2.0 3.0; 4.0 5.0 6.0]
     y_ = [4.0, 5.0, 6.0]
@@ -395,7 +395,7 @@ end
 
 
 @testset "test_LinearAlgebra: adjointTimes(constant,constant)" begin
-    graph = ComputationGraph{Float64}()
+    graph = ComputationGraph(Float64)
 
     x_ = [1.0 2.0; 3.0 4.0; 5.0 6.0]
     y_ = [4.0, 5.0, 6.0]
@@ -441,7 +441,7 @@ end
 end
 
 @testset "test_LinearAlgebra: timesAdjoint(constant,constant)" begin
-    graph = ComputationGraph{Float64}()
+    graph = ComputationGraph(Float64)
 
     # y vector
     x_ = [1.0, 2.0, 3.0]
@@ -490,7 +490,7 @@ end
 end
 
 @testset "test_LinearAlgebra: timesAdjoint special" begin
-    graph = ComputationGraph{Float64}()
+    graph = ComputationGraph(Float64)
 
     x_ = [1.0, 0.0, 0.0]
     y_ = [4.0, 5.0, 6.0]
@@ -518,7 +518,7 @@ end
 end
 
 @testset "test_LinearAlgebra: division and power vector-scalar" begin
-    graph = ComputationGraph{Float64}()
+    graph = ComputationGraph(Float64)
 
     s_ = 3.0
     s = constant(graph, s_)
@@ -555,7 +555,7 @@ end
 end
 
 @testset "test_LinearAlgebra: affine(constant,constant,constant)" begin
-    graph = ComputationGraph{Float64}()
+    graph = ComputationGraph(Float64)
 
     A_ = [1.0 2.0 3.0; 4.0 5.0 6.0]
     x_ = [4.0, 5.0, 6.0]
@@ -597,7 +597,7 @@ end
 end
 
 @testset "test_LinearAlgebra: affineRows(constant,constant,constant,rows)" begin
-    graph = ComputationGraph{Float64}()
+    graph = ComputationGraph(Float64)
 
     A_ = [1.0 2.0 3.0; 4.0 5.0 6.0]
     x_ = [4.0, 5.0, 6.0]
@@ -635,7 +635,7 @@ end
 end
 
 @testset "test_LinearAlgebra: maxRow, findMax" begin
-    graph = ComputationGraph{Float64}()
+    graph = ComputationGraph(Float64)
 
     @show A_ = [1.0 5.0 3.0; 4.0 2.0 6.0]
     A = constant(graph, A_)
@@ -670,7 +670,7 @@ end
 end
 
 @testset "test_LinearAlgebra: selectRows, expandColumns" begin
-    graph = ComputationGraph{Float64}()
+    graph = ComputationGraph(Float64)
 
     # matrix
     @show A_ = [1.0 2.0; 3.0 4.0; 5.0 6.0]
@@ -709,7 +709,7 @@ end
 end
 
 @testset "test_LinearAlgebra: @add" begin
-    graph = ComputationGraph{Float64}()
+    graph = ComputationGraph(Float64)
 
     A_ = [1.0 2.0 3.0; 4.0 5.0 6.0]
     x_ = [4.0, 5.0, 6.0]

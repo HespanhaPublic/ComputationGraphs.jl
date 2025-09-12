@@ -6,7 +6,7 @@ using LinearAlgebra
 using Test
 
 @testset "test: unary operators" begin
-    g = ComputationGraph{Float64}()
+    g = ComputationGraph(Float64)
 
     a = variable(g, 3, 4)
     z1 = zeros(g, 3, 4)
@@ -39,7 +39,7 @@ using Test
 end
 
 @testset "test: sums & subtractions" begin
-    g = ComputationGraph{Float64}()
+    g = ComputationGraph(Float64)
 
     a = variable(g, 3, 4)
     z1 = zeros(g, 3, 4)
@@ -82,7 +82,7 @@ end
 end
 
 @testset "test: multiplication by 1" begin
-    g = ComputationGraph{Float64}()
+    g = ComputationGraph(Float64)
 
     # matrix * ones
     A = variable(g, 3, 4)

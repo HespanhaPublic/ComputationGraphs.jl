@@ -15,6 +15,9 @@ servedocs()
 # 2) call make.jl when changes are detected
 # 3) refresh the browser as needed
 
+#using Pkg
+#Pkg.activate("docs")
+
 using Documenter
 using ComputationGraphs
 
@@ -66,3 +69,6 @@ deploydocs(
     # see https://documenter.juliadocs.org/stable/man/hosting/#Documentation-Versions
     tag_prefix="docs-", # only version tags with that prefix will trigger deployment
 )
+
+#Pkg.activate(".")
+

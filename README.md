@@ -1,11 +1,13 @@
-# ComputationGraphs
+# ComputationGraphs.jl
 
-`ComputationGraphs` is about improving the speed (and energy consumption) of numerical computations
-that need to be performed repeatedly, e.g.,
+`ComputationGraphs`'s julia package is about improving the speed (and energy consumption) of
+numerical computations that need to be performed repeatedly, e.g.,
 
 + one iteration of a numerical optimization algorithm, 
++ training of a Neural Network,
 + one iteration of a filtering/smoothing algorithm,
-+ repeated calls to a classification algorithm on different samples, etc.
++ repeated calls to a classification algorithm on different samples,
+ etc.
 
 The computation to be performed is encoded into *Computation Graph* that describes dependencies
 between numerical operations and permits several forms of "run-time" optimization, including:
@@ -22,9 +24,9 @@ more infomation. [![](https://img.shields.io/badge/docs-stable-blue.svg)](https:
 
 A MATLAB implementation of *Computation Graphs* is discussed in
 
-    [1] J. Hespanha.
-    TensCalc: A toolbox to generate fast code to solve nonlinear constrained minimizations and compute
-    Nash equilibria. Mathematical Programming Computation, 14:451—496, Sep. 2022.
++   J. Hespanha.
+    *TensCalc*: A toolbox to generate fast code to solve nonlinear constrained minimizations and compute
+    Nash equilibria. *Mathematical Programming Computation*, 14:451—496, Sep. 2022.
     [pdf](http://www.ece.ucsb.edu/~hespanha/published/tenscalc_journal-svjour3.pdf)
 
 ## Installation
@@ -36,7 +38,7 @@ A MATLAB implementation of *Computation Graphs* is discussed in
     pkg"registry add General https://github.com/HespanhaPublic/HespanhaRegistry.jl"
     ```
 
-2) Install package as usual:
+2) Install the package as usual:
 
     ```julia
     using Pkg

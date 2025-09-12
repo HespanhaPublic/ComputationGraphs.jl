@@ -45,20 +45,9 @@ This macro then generates
     end
 
     export name
-    name(graph::ComputationGraph{TypeValue},C1::T1,C2::T2,par1,par2,
-    ) where {TypeValue,T1<:AbstractNode,T2<:AbstractNode} =
+    name(graph::ComputationGraph,C1::T1,C2::T2,par1,par2,
+    ) where {T1<:AbstractNode,T2<:AbstractNode} =
         push!(graph,NodeName,cg_name!,(par1,par2),(C1.id,C2.id),(c1.value,C2.value),outputShape)
-
-    #= not yet implemented
-    @inline function compute!(node::NodeName{Tuple{Int},2,Tuple{TP1V,TP2V},TV}) where {TV<:AbstractArray}
-        #C1 = node.parents[1]
-        #C2 = node.parents[2]
-        #@assert !specialComputation(C1) "\$(typeof(node))(\$(typeof.(n.parents))) not implemented"
-        #@assert !specialComputation(C2) "\$(typeof(node))(\$(typeof.(n.parents))) not implemented"
-        cg_name!(n.value,node.parentValues...,node.parameters...)
-    end
-    =#
-
 """
 macro newnode(expr::Expr)
     @assert @capture(expr, name_{parents__}::shape_) "@newnode name{parents types}::outputShape"
@@ -91,8 +80,7 @@ macro newnode(expr::Expr)
     ## build constructor (with types)
     constructorCall = Expr(:call,
         esc(name),                      # constructor name
-        Expr(:(::), esc(:graph),        # graph
-            Expr(:curly, :(ComputationGraphs.ComputationGraph), esc(:TypeValue))),
+        Expr(:(::), esc(:graph), :(ComputationGraphs.ComputationGraph)),  # graph
         [Expr(:(::), esc(parents[i]), esc(Symbol("T_", i)))
          for i in 1:length(parents)]...,
         parameters...,                  # parameters 
@@ -100,7 +88,6 @@ macro newnode(expr::Expr)
     #@show constructorCall
     constructorCallWithWhere = Expr(
         :where, constructorCall,
-        esc(:TypeValue),
         [Expr(:(<:), esc(Symbol("T_", i)), :(ComputationGraphs.AbstractNode))
          for i in 1:length(parents)]...)
     #@show constructorCallWithWhere

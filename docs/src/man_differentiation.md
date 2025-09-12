@@ -35,7 +35,7 @@ using [D](@ref) as follows:
 
 ```julia
 using ComputationGraphs
-graph = ComputationGraph{Float64}()
+graph = ComputationGraph(Float64)
 A = variable(graph, 4, 3)
 x = variable(graph, 3)
 b = variable(graph, 4)

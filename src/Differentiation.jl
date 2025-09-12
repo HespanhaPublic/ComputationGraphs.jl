@@ -34,29 +34,29 @@ The direction `V` can be omitted when `F` is a scalar, in which case
 ComputationGraphs.D
 
 # d Variable 
-D(graph::ComputationGraph{TypeValue},
+D(graph::ComputationGraph,
     V::NodeV,
     F::NodeVariable,
     P::NodeVariable,
-) where {TypeValue,NodeV<:AbstractNode} =
+) where {NodeV<:AbstractNode} =
     (F === P) ? V : zeros(graph, size(P))
 
 # d Constant 
-D(graph::ComputationGraph{TypeValue},
+D(graph::ComputationGraph,
     ::NodeV,
     ::NodeC,
     P::NodeVariable,
-) where {TypeValue,NodeV<:AbstractNode,NodeC<:AbstractConstantNode} = zeros(graph, size(P))
+) where {NodeV<:AbstractNode,NodeC<:AbstractConstantNode} = zeros(graph, size(P))
 
 #########
 ## losses
 #########
 
 # d norm2 
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     F::NodeNorm2,
     P::NodeVariable,
-) where {TypeValue}
+)
     Y = graph.nodes[F.parentIds[1]]
     two = constant(graph, convert(eltype(Y), 2))
     if false
@@ -70,13 +70,13 @@ function D(graph::ComputationGraph{TypeValue},
     @assert size(Dout) == size(P) "mismatch in D(norm2) $(size(Dout)) != $(size(P))"
     return Dout
 end
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     V::NodeV,
     F::NodeNorm2,
     P::NodeVariable,
-) where {TypeValue,NodeV<:AbstractNode}
+) where {NodeV<:AbstractNode}
     Y = graph.nodes[F.parentIds[1]]
-    two = pointTimes(graph, constant(graph, TypeValue(2)), V)
+    two = pointTimes(graph, constant(graph, convert(eltype(V), 2)), V)
     if false
         D1 = D(graph, Y, Y, P)
         Dout = scalarTimes(graph, two, D1)
@@ -90,21 +90,21 @@ function D(graph::ComputationGraph{TypeValue},
 end
 
 # d norm1
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     V::NodeV,
     F::NodeNorm1,
     P::NodeVariable,
-) where {TypeValue,NodeV<:AbstractNode}
+) where {NodeV<:AbstractNode}
     Y = graph.nodes[F.parentIds[1]]
     barV = scalarTimes(graph, V, sign(graph, Y))
     Dout = D(graph, barV, Y, P)
     @assert size(Dout) == size(P) "mismatch in D(norm1) $(size(Dout)) != $(size(P))"
     return Dout
 end
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     F::NodeNorm1,
     P::NodeVariable,
-) where {TypeValue}
+)
     Y = graph.nodes[F.parentIds[1]]
     barV = sign(graph, Y)
     Dout = D(graph, barV, Y, P)
@@ -113,21 +113,21 @@ function D(graph::ComputationGraph{TypeValue},
 end
 
 # d huber
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     V::NodeV,
     F::NodeHuber,
     P::NodeVariable,
-) where {TypeValue,NodeV<:AbstractNode}
+) where {NodeV<:AbstractNode}
     Y = graph.nodes[F.parentIds[1]]
     barV = scalarTimes(graph, V, sat(graph, Y))
     Dout = D(graph, barV, Y, P)
     @assert size(Dout) == size(P) "mismatch in D(hubber) $(size(Dout)) != $(size(P))"
     return Dout
 end
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     F::NodeHuber,
     P::NodeVariable,
-) where {TypeValue}
+)
     Y = graph.nodes[F.parentIds[1]]
     barV = sat(graph, Y)
     Dout = D(graph, barV, Y, P)
@@ -140,11 +140,11 @@ end
 ############
 
 # d adjoint (x')
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     V::NodeV,
     F::NodeAdjoint_,
     P::NodeVariable,
-) where {TypeValue,NodeV<:AbstractNode}
+) where {NodeV<:AbstractNode}
     @assert size(V) == size(F) "mismatch between V[$(typeof(V)),$(size(V))] and F[$(typeof(F)),$(size(F))]"
     x = graph.nodes[F.parentIds[1]]
     VT = adjoint(graph, V)
@@ -154,11 +154,11 @@ function D(graph::ComputationGraph{TypeValue},
 end
 
 # d selectRows(A,rows)
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     V::NodeV,
     F::NodeSelectRows,
     P::NodeVariable,
-) where {TypeValue,NodeV<:AbstractNode}
+) where {NodeV<:AbstractNode}
     @assert size(V) == size(F) "mismatch between V[$(typeof(V)),$(size(V))] and F[$(typeof(F)),$(size(F))]"
 
     A = graph.nodes[F.parentIds[1]]
@@ -176,11 +176,11 @@ end
 #######################
 
 # d add (a+b)
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     V::NodeV,
     F::NodePlus,
     P::NodeVariable,
-) where {TypeValue,NodeV<:AbstractNode}
+) where {NodeV<:AbstractNode}
     @assert size(V) == size(F) "mismatch between V[$(typeof(V)),$(size(V))] and F[$(typeof(F)),$(size(F))]"
 
     a = graph.nodes[F.parentIds[1]]
@@ -194,11 +194,11 @@ end
 
 
 # d subtract (a-b)
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     V::NodeV,
     F::NodeSubtract,
     P::NodeVariable,
-) where {TypeValue,NodeV<:AbstractNode}
+) where {NodeV<:AbstractNode}
     @assert size(V) == size(F) "mismatch between V[$(typeof(V)),$(size(V))] and F[$(typeof(F)),$(size(F))]"
 
     a = graph.nodes[F.parentIds[1]]
@@ -215,11 +215,11 @@ end
 ###########
 
 # d pointTimes (a .* b)
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     V::NodeV,
     F::NodePointTimes,
     P::NodeVariable,
-) where {TypeValue,NodeV<:AbstractNode}
+) where {NodeV<:AbstractNode}
     @assert size(V) == size(F) "mismatch between V[$(typeof(V)),$(size(V))] and F[$(typeof(F)),$(size(F))]"
     a = graph.nodes[F.parentIds[1]]
     b = graph.nodes[F.parentIds[2]]
@@ -233,16 +233,16 @@ function D(graph::ComputationGraph{TypeValue},
 end
 
 # d scalarTimes (a .* b, a is scalar)
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     V::NodeV,
     F::NodeScalarTimes,
     P::NodeVariable,
-) where {TypeValue,NodeV<:AbstractNode}
+) where {NodeV<:AbstractNode}
     @assert size(V) == size(F) "mismatch between V[$(typeof(V)),$(size(V))] and F[$(typeof(F)),$(size(F))]"
     a = graph.nodes[F.parentIds[1]]
     b = graph.nodes[F.parentIds[2]]
     Va = scalarTimes(graph, a, V)
-    Vb = dot(graph, V, b)
+    Vb = LinearAlgebra.dot(graph, V, b)
     D1 = D(graph, Va, b, P)
     D2 = D(graph, Vb, a, P)
     Dout = +(graph, D1, D2)
@@ -251,11 +251,11 @@ function D(graph::ComputationGraph{TypeValue},
 end
 
 # d timesAdjoint (x * y')
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     V::NodeV,
     F::NodeTimesAdjoint,
     P::NodeVariable,
-) where {TypeValue,NodeV<:AbstractNode}
+) where {NodeV<:AbstractNode}
     @assert size(V) == size(F) "mismatch between V[$(typeof(V)),$(size(V))] and F[$(typeof(F)),$(size(F))]"
     x = graph.nodes[F.parentIds[1]]
     y = graph.nodes[F.parentIds[2]]
@@ -270,11 +270,11 @@ function D(graph::ComputationGraph{TypeValue},
 end
 
 # d timesAdjointOnes (x * ones')
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     V::NodeV,
     F::NodeTimesAdjointOnes,
     P::NodeVariable,
-) where {TypeValue,NodeV<:AbstractNode}
+) where {NodeV<:AbstractNode}
     @assert size(V) == size(F) "mismatch between V[$(typeof(V)),$(size(V))] and F[$(typeof(F)),$(size(F))]"
     x = graph.nodes[F.parentIds[1]]
     o = ones(graph, F.parameters[1]) # ones
@@ -285,11 +285,11 @@ function D(graph::ComputationGraph{TypeValue},
 end
 
 # d adjointTimes (A' * x)
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     V::NodeV,
     F::NodeAdjointTimes,
     P::NodeVariable,
-) where {TypeValue,NodeV<:AbstractNode}
+) where {NodeV<:AbstractNode}
     @assert size(V) == size(F) "mismatch between V[$(typeof(V)),$(size(V))] and F[$(typeof(F)),$(size(F))]"
     A = graph.nodes[F.parentIds[1]]
     x = graph.nodes[F.parentIds[2]]
@@ -304,11 +304,11 @@ function D(graph::ComputationGraph{TypeValue},
 end
 
 # d times (A * x)
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     V::NodeV,
     F::NodeTimes,
     P::NodeVariable,
-) where {TypeValue,NodeV<:AbstractNode}
+) where {NodeV<:AbstractNode}
     @assert size(V) == size(F) "mismatch between V[$(typeof(V)),$(size(V))] and F[$(typeof(F)),$(size(F))]"
 
     A = graph.nodes[F.parentIds[1]]
@@ -324,11 +324,11 @@ function D(graph::ComputationGraph{TypeValue},
 end
 
 # d affine (A*x+b)
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     V::NodeV,
     F::NodeAffine,
     P::NodeVariable,
-) where {TypeValue,NodeV<:AbstractNode}
+) where {NodeV<:AbstractNode}
     @assert size(V) == size(F) "mismatch between V[$(typeof(V)),$(size(V))] and F[$(typeof(F)),$(size(F))]"
 
     A = graph.nodes[F.parentIds[1]]
@@ -352,11 +352,11 @@ end
 
 #=
 # d affineRows (A*x+b)
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     V::NodeV,
     F::NodeAffineRows{Tuple{},Tuple{Int,Int,Int},Tuple{TP1V,TP2V,TP3V},VF},
     P::NodeVariable,
-) where {TypeValue,NodeV<:AbstractNode,
+) where {NodeV<:AbstractNode,
     TP1V<:AbstractArray,TP2V<:AbstractArray,TP3V<:AbstractArray}
     @assert size(V) == size(F) "mismatch between V[$(typeof(V)),$(size(V))] and F[$(typeof(F)),$(size(F))]"
 
@@ -383,10 +383,10 @@ end
 ############
 
 # d a scalar / b scalar = (b a'-a b')/b^2
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     F::NodeDivideScalar,
     P::NodeVariable,
-) where {TypeValue}
+)
     a = graph.nodes[F.parentIds[1]]
     b = graph.nodes[F.parentIds[2]]
     @assert size(a) == ()
@@ -404,11 +404,11 @@ end
 ##################
 
 # d maxRow(A) 
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     V::NodeV,
     F::NodeMaxRow,
     P::NodeVariable,
-) where {TypeValue,NodeV<:AbstractNode}
+) where {NodeV<:AbstractNode}
     A = graph.nodes[F.parentIds[1]]
 
     rows = findMaxRow(graph, A)
@@ -425,11 +425,11 @@ end
 ############
 
 # d relu (x)
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     V::NodeV,
     F::NodeRelu,
     P::NodeVariable,
-) where {TypeValue,NodeV<:AbstractNode}
+) where {NodeV<:AbstractNode}
     @assert size(V) == size(F) "mismatch between V[$(typeof(V)),$(size(V))] and F[$(typeof(F)),$(size(F))]"
     x = graph.nodes[F.parentIds[1]]
     H = heaviside(graph, x)
@@ -440,11 +440,11 @@ function D(graph::ComputationGraph{TypeValue},
 end
 
 # d exp (x)
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     V::NodeV,
     F::NodeExp_,
     P::NodeVariable,
-) where {TypeValue,NodeV<:AbstractNode}
+) where {NodeV<:AbstractNode}
     @assert size(V) == size(F) "mismatch between V[$(typeof(V)),$(size(V))] and F[$(typeof(F)),$(size(F))]"
     x = graph.nodes[F.parentIds[1]]
     H = exp(graph, x)
@@ -455,11 +455,11 @@ function D(graph::ComputationGraph{TypeValue},
 end
 
 # d logistic: f(x)=1/(1+exp(-x))   f'(x)=exp(-x)/(1+exp(-x))^2
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     V::NodeV,
     F::NodeLogistic_,
     P::NodeVariable,
-) where {TypeValue,NodeV<:AbstractNode}
+) where {NodeV<:AbstractNode}
     @assert size(V) == size(F) "mismatch between V[$(typeof(V)),$(size(V))] and F[$(typeof(F)),$(size(F))]"
     x = graph.nodes[F.parentIds[1]]
     H = dlogistic(graph, x)
@@ -470,11 +470,11 @@ function D(graph::ComputationGraph{TypeValue},
 end
 
 # d^2 logistic: f(x)=1/(1+exp(-x))   f''(x)=(exp(-2x)-exp(-x)) /(1+exp(-x))^3
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     V::NodeV,
     F::NodeDlogistic,
     P::NodeVariable,
-) where {TypeValue,NodeV<:AbstractNode}
+) where {NodeV<:AbstractNode}
     @assert size(V) == size(F) "mismatch between V[$(typeof(V)),$(size(V))] and F[$(typeof(F)),$(size(F))]"
     x = graph.nodes[F.parentIds[1]]
     H = ddlogistic(graph, x)
@@ -513,11 +513,11 @@ where ``\\nabla_{X}`` denotes partial derivative with respect to `X`.
 + `Y::Node`: Node that encodes the expression of the Hessian matrix (added to the graph if it
         was not already part of it.) 
 """
-function hessian(graph::ComputationGraph{TypeValue},
+function hessian(graph::ComputationGraph,
     F::NodeF,
     P::NodeVariable,
     Q::NodeVariable,
-) where {TypeValue,NodeF<:AbstractNode}
+) where {NodeF<:AbstractNode}
     @printf("Hessian of [%s] with respect to [[%s], [%s]]\n", size(F), size(P), size(Q))
 
     @assert size(F) == () "Hessian only available for scalars"
@@ -531,21 +531,21 @@ function hessian(graph::ComputationGraph{TypeValue},
 end
 
 ## Catch all error
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     V::NodeV,
     F::NodeF,
     P::NodeP,
-) where {TypeValue,NodeV<:AbstractNode,NodeF<:AbstractNode,NodeP<:AbstractNode}
+) where {NodeV<:AbstractNode,NodeF<:AbstractNode,NodeP<:AbstractNode}
     @show @red(string(typeof(F)))
     @printf("  V = %s\n  F = \e[31m%s\e[39m\n  P = %s\n",
         typeof(V), typeof(F), typeof(P)) # not using @red because of {}
     throw(DomainError(typeof(F), "missing derivative"))
 end
 
-function D(graph::ComputationGraph{TypeValue},
+function D(graph::ComputationGraph,
     F::NodeF,
     P::NodeP,
-) where {TypeValue,NodeF<:AbstractNode,NodeP<:AbstractNode}
+) where {NodeF<:AbstractNode,NodeP<:AbstractNode}
     @show @red(string(typeof(F)))
     @printf("  F = \e[31m%s\e[39m\n  P = %s\n",
         typeof(F), typeof(P)) # not using @red because of {}

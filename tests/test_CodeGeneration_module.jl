@@ -202,7 +202,8 @@ end
     bmk_input_loss_grad = @benchmark begin
         set!($graph, batchInput_, $batchInput)
         loss = get($graph, loss_)
-        gradient = get($graph, gradient_)
+        # gradient = get($graph, gradient_) # not allocation free
+        compute!($graph, gradient_) # not allocation free
     end evals = 1 samples = nSamples setup = (
         batchInput_ = $training.input;
         loss_ = $training.loss;

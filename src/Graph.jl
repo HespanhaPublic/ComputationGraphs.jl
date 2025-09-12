@@ -83,7 +83,11 @@ Structure use to store the computation graph.
 
 + `count::Vector{UInt}`: number of times each node has been computed since last `resetLog!`
 """
-struct ComputationGraph{TypeValue}
+struct ComputationGraph
+    # default types
+    TypeValue::DataType
+    TypeArray::UnionAll  # `Array` is UnionAll
+    # array of nodes
     nodes::Vector{AbstractNode}
     # dependencies
     children::Vector{Vector{Int}}
@@ -100,8 +104,10 @@ struct ComputationGraph{TypeValue}
     enableTask::BitVector
     requestEvent::Vector{Threads.Event}
     validEvent::Vector{Threads.Event}
-    ComputationGraph{TypeValue}() where {TypeValue} =
-        new{TypeValue}(
+    ComputationGraph(
+        TypeValue::DataType=Float64,
+        TypeArray::UnionAll=Array) =
+        new(TypeValue, TypeArray,
             AbstractNode[],
             Vector{UInt}[], Vector{UInt}[],
             BitVector(undef, 0),
@@ -117,23 +123,23 @@ struct ComputationGraph{TypeValue}
 end
 
 """Number of nodes in the graph."""
-@inline Base.length(graph::ComputationGraph{TypeValue}) where {TypeValue} = length(graph.nodes)
+@inline Base.length(graph::ComputationGraph) = length(graph.nodes)
 
 """Total memory for all the variables stored in the graph."""
-@inline memory(graph::ComputationGraph{TypeValue}) where {TypeValue} =
+@inline memory(graph::ComputationGraph) =
     sum(Base.summarysize(nodeValue(node)) for node in graph.nodes; init=0)
 
 
-@inline function resetLog!(graph::ComputationGraph{TypeValue}) where {TypeValue}
+@inline function resetLog!(graph::ComputationGraph)
     graph.time .= zero(UInt64)
     graph.count .= zero(UInt)
 end
 
 """List with all the parents of a set of node."""
 function nodesAndParents(
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     nodes::Vararg{AbstractNode}
-) where {TypeValue}
+)
     ids = reduce(union, union(Set(node.id), Set(graph.parents[node.id]))
                         for node in nodes; init=Set{Int}()) |> collect |> sort
     return ids
@@ -141,9 +147,9 @@ end
 export children
 """List with all the children of a set of node."""
 function children(
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     nodes::Vararg{AbstractNode}
-) where {TypeValue}
+)
     ids = reduce(union, Set(graph.children[node.id])
                         for node in nodes; init=Set{Int}()) |> collect |> sort
     return ids
@@ -153,17 +159,18 @@ end
 Add node to graph (avoiding repeated nodes).
 """
 Base.push!(
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     type::Type,
     computeFunction::Function,
     parameters::TP,
     parentIds::TPI,
     parentValues::TPV,
     dims::NTuple{N,Int}
-) where {TypeValue,TPI<:Tuple,TPV<:Tuple,TP<:Tuple,N} =
-    push!(graph, type, computeFunction, parameters, parentIds, parentValues, TypeArray{TypeValue,N}(undef, dims), false)
+) where {TPI<:Tuple,TPV<:Tuple,TP<:Tuple,N} =
+    push!(graph, type, computeFunction, parameters, parentIds,
+        parentValues, graph.TypeArray{graph.TypeValue,N}(undef, dims), false)
 Base.push!(
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     type::Type,
     computeFunction::Function,
     parameters::TP,
@@ -171,10 +178,10 @@ Base.push!(
     parentValues::TPV,
     typeValue::DataType,
     dims::NTuple{N,Int}
-) where {TypeValue,TPI<:Tuple,TPV<:Tuple,TP<:Tuple,N} =
+) where {TPI<:Tuple,TPV<:Tuple,TP<:Tuple,N} =
     push!(graph, type, computeFunction, parameters, parentIds, parentValues, typeValue{TypeValue,N}(undef, dims), false)
 function Base.push!(
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     type::Type,
     computeFunction::Function,
     parameters::TP,
@@ -182,7 +189,7 @@ function Base.push!(
     parentValues::TPV,
     value::TV,
     validValue::Bool
-) where {TypeValue,TP<:Tuple,TPI<:Tuple,TPV<:Tuple,TV<:AbstractArray}
+) where {TP<:Tuple,TPI<:Tuple,TPV<:Tuple,TV<:AbstractArray}
     # check whether node already exists
     for (i, node) in enumerate(graph.nodes)
         #println(type)
@@ -252,10 +259,10 @@ end
 Add node id to all its parents, parents's parents, etc.
 """
 function add2children(
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     node::AbstractNode,
     id::Int
-) where {TypeValue}
+)
     for pid in node.parentIds
         if !(id in graph.children[pid])
             push!(graph.children[pid], id)
@@ -273,7 +280,7 @@ Macro to add a complex expression into a computation graph.
 This macro "breaks" the complex expression to elementary subexpressions and add them all to the graph.
 
 # Parameters:
-+ `graph::ComputationGraph{TypeValue}`: graph where expression will be stored
++ `graph::ComputationGraph`: graph where expression will be stored
 + `expression::Expr`: expression to be added to the graph
 
 # Returns:
@@ -287,7 +294,7 @@ The following code provides two alternatives to create a computation graph to ev
 1) without the @add macro
     ```julia
     using ComputationGraphs
-    gr=ComputationGraph{Float32}()
+    gr=ComputationGraph(Float32)
     A = variable(gr,3,4)
     x = variable(gr,4)
     b = variable(gr,3)
@@ -299,7 +306,7 @@ The following code provides two alternatives to create a computation graph to ev
 2) without the @add macro
     ```julia
     using ComputationGraphs
-    gr=ComputationGraph{Float32}()
+    gr=ComputationGraph(Float32)
     A = @add gr variable(3,4)
     x = @add gr variable(4)
     b = @add gr variable(3)
@@ -353,26 +360,26 @@ end
 
 # Adding graph-version of node interface
 
-@inline nodeValue(::ComputationGraph{TypeValue}, node::Node
-) where {TypeValue,Node<:AbstractNode} = nodeValue(node)
-@inline nodeValue(::ComputationGraph{TypeValue}, nodes::Tuple
-) where {TypeValue} = Tuple(nodeValue(node) for node in nodes)
-@inline nodeValue(::ComputationGraph{TypeValue}, nodes::NamedTuple
-) where {TypeValue} = (; (k => nodeValue(nodes[k]) for k in eachindex(nodes))...)
+@inline nodeValue(::ComputationGraph, node::Node
+) where {Node<:AbstractNode} = nodeValue(node)
+@inline nodeValue(::ComputationGraph, nodes::Tuple
+) = Tuple(nodeValue(node) for node in nodes)
+@inline nodeValue(::ComputationGraph, nodes::NamedTuple
+) = (; (k => nodeValue(nodes[k]) for k in eachindex(nodes))...)
 
-@inline Base.size(graph::ComputationGraph{TypeValue}, node::Node
-) where {TypeValue,Node<:AbstractNode} = size(node)
-@inline Base.size(graph::ComputationGraph{TypeValue}, node::Node, d::Int
-) where {TypeValue,Node<:AbstractNode} = size(node, d)
-@inline Base.length(graph::ComputationGraph{TypeValue}, node::Node,
-) where {TypeValue,Node<:AbstractNode} = length(node)
+@inline Base.size(graph::ComputationGraph, node::Node
+) where {Node<:AbstractNode} = size(node)
+@inline Base.size(graph::ComputationGraph, node::Node, d::Int
+) where {Node<:AbstractNode} = size(node, d)
+@inline Base.length(graph::ComputationGraph, node::Node,
+) where {Node<:AbstractNode} = length(node)
 
-@inline Base.similar(::ComputationGraph{TypeValue}, node::Node
-) where {TypeValue,Node<:AbstractNode} = similar(node)
-@inline Base.eltype(::ComputationGraph{TypeValue}, node::Node
-) where {TypeValue,Node<:AbstractNode} = eltype(node)
-@inline typeofvalue(::ComputationGraph{TypeValue}, node::Node
-) where {TypeValue,Node<:AbstractNode} = typeof(node)
+@inline Base.similar(::ComputationGraph, node::Node
+) where {Node<:AbstractNode} = similar(node)
+@inline Base.eltype(::ComputationGraph, node::Node
+) where {Node<:AbstractNode} = eltype(node)
+@inline typeofvalue(::ComputationGraph, node::Node
+) where {Node<:AbstractNode} = typeof(node)
 
 ####################
 ## Display functions
@@ -427,8 +434,8 @@ Display the nodes of a computation graph.
 When `topTimes=true` only displays the nodes with the largest total computation times (and hides
 information about parents/children).
 """
-function Base.display(graph::ComputationGraph{TypeValue};
-    topTimes=false, percentage=0.8) where {TypeValue}
+function Base.display(graph::ComputationGraph;
+    topTimes=false, percentage=0.8)
     @printf("%s [values use %d bytes/%d bytes total]\n",
         typeof(graph), memory(graph), Base.summarysize(graph))
     if topTimes
@@ -487,11 +494,11 @@ When `withParents=true` shows the full expression needed compute a specific node
 shows the specific node (as in `display(node)`).
 """
 function Base.display(
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     node::Node;
     withParents=true,
     shown=nothing
-) where {TypeValue,Node<:AbstractNode}
+) where {Node<:AbstractNode}
     if withParents
         indent = 0
         if isnothing(shown)
@@ -504,11 +511,11 @@ function Base.display(
 end
 # FIXME should use Vararg
 function Base.display(
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     nodes::Vararg{AbstractNode};
     withParents=true,
     shown=nothing
-) where {TypeValue}
+)
     if isnothing(shown)
         shown = falses(length(graph))
     end
@@ -518,12 +525,12 @@ function Base.display(
 end
 
 function display_(
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     node::Node,
     indent::Int,
     shown::BitVector;
     noindent=false
-) where {TypeValue,Node<:AbstractNode}
+) where {Node<:AbstractNode}
     id = node.id
     if noindent
         indentStr = ""

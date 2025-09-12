@@ -8,7 +8,7 @@ using LinearAlgebra
 using Test
 
 @testset "test: d(variable1,variable1)" begin
-    g = ComputationGraph{Float64}()
+    g = ComputationGraph(Float64)
 
     x_ = [1.0, 2.0, -3.0]
     y_ = [4.0, 5.0, -6.0]
@@ -33,7 +33,7 @@ using Test
 end
 
 @testset "test: d(variable1,variable2)" begin
-    g = ComputationGraph{Float64}()
+    g = ComputationGraph(Float64)
 
     x_ = [1.0, 2.0, -3.0]
     y_ = [4.0, 5.0, -6.0]
@@ -59,7 +59,7 @@ end
 end
 
 @testset "test: d(constant,variable)" begin
-    g = ComputationGraph{Float64}()
+    g = ComputationGraph(Float64)
 
     x_ = [1.0, 2.0, -3.0]
     y_ = [4.0, 5.0, -6.0]
@@ -85,7 +85,7 @@ end
 end
 
 @testset "test: d(zero,variable)" begin
-    g = ComputationGraph{Float64}()
+    g = ComputationGraph(Float64)
 
     x_ = [1.0, 2.0, -3.0]
     x = variable(g, size(x_))
@@ -110,7 +110,7 @@ end
 end
 
 @testset "test: d(norm2)" begin
-    g = ComputationGraph{Float64}()
+    g = ComputationGraph(Float64)
 
     x_ = [1.0, 2.0, -3.0]
     x = variable(g, size(x_))
@@ -130,7 +130,7 @@ end
 end
 
 @testset "test: d(times,A)" begin
-    g = ComputationGraph{Float64}()
+    g = ComputationGraph(Float64)
 
     A_ = [1.0 2.0 3.0; 4.0 5.0 6.0]
     x_ = [4.0, 5.0, 6.0]
@@ -158,7 +158,7 @@ end
 end
 
 @testset "test: d(times,x)" begin
-    g = ComputationGraph{Float64}()
+    g = ComputationGraph(Float64)
 
     A_ = [1.0 2.0 3.0; 4.0 5.0 6.0]
     x_ = [4.0, 5.0, 6.0]
@@ -187,7 +187,7 @@ end
 
 
 @testset "test: d(affine,A)" begin
-    g = ComputationGraph{Float64}()
+    g = ComputationGraph(Float64)
 
     A_ = [1.0 2.0 3.0; 4.0 5.0 6.0]
     x_ = [4.0, 5.0, 6.0]
@@ -218,7 +218,7 @@ end
 end
 
 @testset "test: d(affine,x)" begin
-    g = ComputationGraph{Float64}()
+    g = ComputationGraph(Float64)
 
     A_ = [1.0 2.0 3.0; 4.0 5.0 6.0]
     x_ = [4.0, 5.0, 6.0]
@@ -249,7 +249,7 @@ end
 end
 
 @testset "test: d(affine,b)" begin
-    g = ComputationGraph{Float64}()
+    g = ComputationGraph(Float64)
 
     A_ = [1.0 2.0 3.0; 4.0 5.0 6.0]
     x_ = [4.0, 5.0, 6.0]
@@ -280,7 +280,7 @@ end
 end
 
 @testset "test: d(x-y,x)" begin
-    g = ComputationGraph{Float64}()
+    g = ComputationGraph(Float64)
 
     x_ = [4.0, 5.0, 6.0]
     x = variable(g, size(x_))
@@ -308,7 +308,7 @@ end
 end
 
 @testset "test: d(x-y,y)" begin
-    g = ComputationGraph{Float64}()
+    g = ComputationGraph(Float64)
 
     x_ = [4.0, 5.0, 6.0]
     x = variable(g, size(x_))
@@ -336,7 +336,7 @@ end
 end
 
 @testset "test: d(relu,x)" begin
-    g = ComputationGraph{Float64}()
+    g = ComputationGraph(Float64)
 
     x_ = [4.0, 5.0, -6.0, 0.0]
     x = variable(g, size(x_))

@@ -37,7 +37,6 @@ ComputationGraphs.display
 
 ```@docs
 # grep @newnode src/LinearAlgebra.jl 
-add
 adjoint
 adjoint_
 adjointTimes
@@ -45,7 +44,7 @@ adjointTimesExpandColumns
 affine
 affineRows
 column
-ComputationGraphs.dot
+LinearAlgebra.dot
 divideScalar
 expandColumns
 expandColumnsTimesAdjoint
@@ -56,10 +55,11 @@ maxRow
 minus
 norm1
 norm2
+plus
 pointDivide
 pointTimes
-scalarAdd
 scalarDivide
+scalarPlus
 scalarTimes
 selectRows
 subtract
@@ -150,7 +150,7 @@ ComputationGraphs.AbstractConstantNode
 ComputationGraphs.AbstractSpecialNode
 ComputationGraphs.noComputation
 
-ComputationGraphs.NodeAdd
+ComputationGraphs.NodePlus
 ComputationGraphs.NodeAdjoint_
 ComputationGraphs.NodeAdjointTimes
 ComputationGraphs.NodeAdjointTimesExpandColumns
@@ -179,7 +179,7 @@ ComputationGraphs.NodePointDivide
 ComputationGraphs.NodePointTimes
 ComputationGraphs.NodeRelu
 ComputationGraphs.NodeSat
-ComputationGraphs.NodeScalarAdd
+ComputationGraphs.NodeScalarPlus
 ComputationGraphs.NodeScalarTimes
 ComputationGraphs.NodeSelectRows
 ComputationGraphs.NodeScalarDivide

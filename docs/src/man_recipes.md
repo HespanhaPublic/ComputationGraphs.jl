@@ -67,7 +67,7 @@ descent, we would use:
 
 ```@example recipe1
 using ComputationGraphs
-graph = ComputationGraph{Float64}()
+graph = ComputationGraph(Float64)
 A = variable(graph, 4, 3)
 x = variable(graph, 3)
 b = variable(graph, 4)
@@ -188,7 +188,7 @@ to do inference and compute the (training) loss function for the network.
 
 ```@example recipe2
 using ComputationGraphs, Random
-graph=ComputationGraph{Float32}()
+graph=ComputationGraph(Float32)
 hiddenLayers=[20,20,20]
 (; inference, training, theta)=denseChain!(graph; 
         nNodes=[1,hiddenLayers...,2], inferenceBatchSize=1, trainingBatchSize=3000,

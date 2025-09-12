@@ -26,9 +26,9 @@ Structure used to generate dedicated code:
 - `count::Bool=true`: When `true`, the generated code includes counters for how many times each
         node's computation function has been called.
 """
-mutable struct Code{TypeValue}
+mutable struct Code
     type::Symbol # :module or :struct
-    graph::ComputationGraph{TypeValue}
+    graph::ComputationGraph
     name::String
     inits::String
     sets::String
@@ -39,13 +39,13 @@ mutable struct Code{TypeValue}
     unrolled::Bool
     parallel::Bool
     count::Bool
-    function Code(graph::ComputationGraph{TypeValue}, name::String;
+    function Code(graph::ComputationGraph, name::String;
         type::Symbol=:struct,
         unrolled::Bool=false,
         parallel::Bool=false,
         count::Bool=true
-    ) where {TypeValue}
-        code = new{TypeValue}(
+    )
+        code = new(
             type, graph, name, "", "", "", "", "", "", unrolled, parallel, count)
         return code
     end
@@ -128,9 +128,9 @@ end
 Create initialization code
 """
 function nodes_str(
-    code::Code{TypeValue};
+    code::Code;
     indent::Int=0
-) where {TypeValue}
+)
     # create node variables
     graph = code.graph
     indent_str = repeat(" ", indent)
@@ -157,7 +157,7 @@ function nodes_str(
             error("initialization of $(typeof(node)) not implemented")
         else
             str *= indent_str * @sprintf("%s::%s=%s{%s,%d}(undef,%s)\n", nodeDef(code, i),
-                typeofvalue(node), TypeArray, eltype(node), length(sz), sz)
+                typeofvalue(node), graph.TypeArray, eltype(node), length(sz), sz)
         end
     end
     # valid
@@ -188,9 +188,9 @@ end
 
 """Create string to call function that does the computation"""
 function call_gs(
-    code::Code{TypeValue},
+    code::Code,
     node::Node,
-) where {TypeValue,Node<:AbstractNode}
+) where {Node<:AbstractNode}
     id = node.id
     for pid in node.parentIds
         p = code.graph.nodes[pid]
@@ -217,10 +217,10 @@ Create code to compute nodes (for gets)
 [single function with nested if's]
 """
 function compute_str_unrolled(
-    code::Code{TypeValue},
+    code::Code,
     node::Node,
     indent::Int=4
-) where {TypeValue,Node<:AbstractNode}
+) where {Node<:AbstractNode}
     if noComputation(node) && !isa(node, NodeVariable)
         error("$(typeof(node)) does not need computation")
     end
@@ -252,10 +252,10 @@ Create code to compute nodes (for gets)
 [recursive functions]
 """
 function compute_str_recursive(
-    code::Code{TypeValue},
+    code::Code,
     node::Node;
     indent::Int=4
-) where {TypeValue,Node<:AbstractNode}
+) where {Node<:AbstractNode}
     if noComputation(node) && !isa(node, NodeVariable)
         error("$(typeof(node)) does not need computation")
     end
@@ -293,9 +293,9 @@ end
 Create parallel code to recompute all nodes
 """
 function compute_str_parallel(
-    code::Code{TypeValue};
+    code::Code;
     indent::Int=4
-) where {TypeValue}
+)
     indent_str = repeat(" ", indent)
     firstArg = code.type == :struct ? @sprintf("%s::%s,", code.name, uppercasefirst(code.name)) : ""
     str = ""
@@ -385,10 +385,10 @@ export sets!
 Add set!'s to code
 """
 function sets!(
-    code::Code{TypeValue},
+    code::Code,
     args::Vararg{Pair};
     indent::Int=0,
-) where {TypeValue}
+)
     indent_str = repeat(" ", indent)
     firstArg = code.type == :struct ? @sprintf("%s::%s,", code.name, uppercasefirst(code.name)) : ""
     str = ""
@@ -441,10 +441,10 @@ export gets!
 Add get!'s to code
 """
 function gets!(
-    code::Code{TypeValue},
+    code::Code,
     args::Vararg{Pair};
     indent::Int=0,
-) where {TypeValue}
+)
     indent_str = repeat(" ", indent)
     firstArg = code.type == :struct ? @sprintf("%s::%s,", code.name, uppercasefirst(code.name)) : ""
     str = ""
@@ -515,10 +515,10 @@ export copies!
 Add copyto!'s to code
 """
 function copies!(
-    code::Code{TypeValue},
+    code::Code,
     args::Vararg{Pair};
     indent::Int=0,
-) where {TypeValue}
+)
     indent_str = repeat(" ", indent)
     firstArg = code.type == :struct ? @sprintf("%s::%s,", code.name, uppercasefirst(code.name)) : ""
     str = ""
@@ -577,10 +577,10 @@ export computes!
 Add computes's to code
 """
 function computes!(
-    code::Code{TypeValue},
+    code::Code,
     args::Vararg{Pair};
     indent::Int=0,
-) where {TypeValue}
+)
     indent_str = repeat(" ", indent)
     firstArg = code.type == :struct ? @sprintf("%s::%s,", code.name, uppercasefirst(code.name)) : ""
     str = ""
@@ -614,8 +614,8 @@ end
 
 export expression!
 function expression!(
-    code::Code{TypeValue},
+    code::Code,
     expr::Expr
-) where {TypeValue}
+)
     code.expressions *= string(expr)
 end

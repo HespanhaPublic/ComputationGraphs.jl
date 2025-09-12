@@ -13,7 +13,7 @@ parameters* \$\\theta\$, according to
 
 # Parameters:
 
-+ `graph::ComputationGraph{TypeValue}`; Computation graph that is updated "in-place" by adding to it
++ `graph::ComputationGraph`; Computation graph that is updated "in-place" by adding to it
         all the nodes needed to perform one step of gradient descent.
 
 + `loss::Node`: Scalar-valued computation node that corresponds to the loss function \$J(\\theta)\$
@@ -36,7 +36,7 @@ parameters* \$\\theta\$, according to
 ```julia
 using ComputationGraphs
 
-graph = ComputationGraph{Float64}()
+graph = ComputationGraph(Float64)
 
 # Define optimization parameters and loss function
 A = variable(graph, 4, 3)
@@ -68,11 +68,11 @@ println("final loss: ", get(graph,loss))
 ```
 """
 function gradDescent!(
-    graph::ComputationGraph{TypeValue};
+    graph::ComputationGraph;
     loss::Node,
     theta::NamedTuple,
     code::Union{Code,Nothing}=nothing,
-) where {TypeValue,Node<:AbstractNode}
+) where {Node<:AbstractNode}
     # create solver parameters
     eta = variable(graph, ())
     # compute gradients
@@ -113,7 +113,7 @@ The algorithm is described in [Adam](https://arxiv.org/pdf/1412.6980), using the
 section 2.1 for a more efficient implementation.
 
 # Parameters:
-+ `graph::ComputationGraph{TypeValue}`; Computation graph that is updated "in-place" by adding to it
++ `graph::ComputationGraph`; Computation graph that is updated "in-place" by adding to it
         all the nodes needed to perform one step of gradient descent.
 + `loss::Node`: Scalar-valued computation node that corresponds to the loss function \$J(\\theta)\$
 + `theta::NamedTuple`: Named tuple with the variable nodes that correspond to the optimization
@@ -137,16 +137,16 @@ section 2.1 for a more efficient implementation.
 
 """
 function adam!(
-    graph::ComputationGraph{TypeValue};
+    graph::ComputationGraph;
     loss::Node,
     theta::NamedTuple,
     code::Union{Code,Nothing}=nothing,
-) where {TypeValue,Node<:AbstractNode}
+) where {Node<:AbstractNode}
     # create solver parameters
-    eta = variable(graph, fill(TypeValue(1e-3)))
-    beta1 = variable(graph, fill(TypeValue(0.9)))
-    beta2 = variable(graph, fill(TypeValue(0.999)))
-    epsilon = variable(graph, fill(TypeValue(1e-8)))
+    eta = variable(graph, fill(graph.TypeValue(1e-3)))
+    beta1 = variable(graph, fill(graph.TypeValue(0.9)))
+    beta2 = variable(graph, fill(graph.TypeValue(0.999)))
+    epsilon = variable(graph, fill(graph.TypeValue(1e-8)))
 
     # create solver state variables
     iteration = variable(graph, ())
@@ -162,7 +162,7 @@ function adam!(
         k => D(graph, loss, v)
         for (k, v) in pairs(theta))...)
 
-    one_ = constant(graph, one(TypeValue))
+    one_ = constant(graph, one(graph.TypeValue))
 
     # initialization for solver state variables
     init_iteration = one_

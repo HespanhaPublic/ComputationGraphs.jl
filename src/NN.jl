@@ -90,7 +90,7 @@ function denseChain(
     parallel::Bool=false
 ) where {TypeValue}
     ## Start with empty graph
-    graph = ComputationGraph{TypeValue}()
+    graph = ComputationGraph(TypeValue)
 
     # generate NN code
     if !isempty(codeName)
@@ -232,7 +232,7 @@ function denseQlearningChain(
     parallel::Bool=false
 ) where {TypeValue}
     ## Start with empty graph
-    graph = ComputationGraph{TypeValue}()
+    graph = ComputationGraph(TypeValue)
 
     # FIXME: a lot of this code is duplicated with RecipesNN.denseChain!(), should unify
 
@@ -397,7 +397,7 @@ end
 export trainNN!, trainQlearning!
 
 function trainNN!(;
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     theta,
     inference,
     training,
@@ -501,7 +501,7 @@ end
 
 
 function trainQlearning!(;
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     theta,
     inference,
     training,

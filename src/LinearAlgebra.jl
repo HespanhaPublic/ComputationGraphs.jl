@@ -78,8 +78,8 @@ end
 end
 # overload usual Base.-
 """-() unitary minus operator for a vector or matrix"""
-Base.:-(graph::ComputationGraph{TypeValue}, a::Node
-) where {TypeValue,Node<:AbstractNode} = minus(graph, a)
+Base.:-(graph::ComputationGraph, a::Node
+) where {Node<:AbstractNode} = minus(graph, a)
 
 
 @doc "adjoint() computes adjoint/transpose of a vector or matrix" adjoint_
@@ -87,15 +87,15 @@ Base.:-(graph::ComputationGraph{TypeValue}, a::Node
 @inline function cg_adjoint_!(
     val::TypeArray{TypeValue,2}, x::TypeArray{TypeValue,N}
 ) where {TypeValue,N}
-    adjoint!(val, x)
+    LinearAlgebra.adjoint!(val, x)
     return nothing
 end
 # overload usual Base.adjoint
 """
 adjoint() computes adjoint/transpose of a vector or matrix
 """
-Base.adjoint(graph::ComputationGraph{TypeValue}, a::Node
-) where {TypeValue,Node<:AbstractNode} = adjoint_(graph, a)
+Base.adjoint(graph::ComputationGraph, a::Node
+) where {Node<:AbstractNode} = adjoint_(graph, a)
 
 @doc "column(A,k) returns the column k of A as a vector" column
 @newnode column{1,A}::(size(A, 1),)
@@ -155,8 +155,8 @@ end
 end
 # overload usual Base.:+
 """a + b addition operator"""
-Base.:+(graph::ComputationGraph{TypeValue}, a::Node1, b::Node2
-) where {TypeValue,Node1<:AbstractNode,Node2<:AbstractNode} = plus(graph, a, b)
+Base.:+(graph::ComputationGraph, a::Node1, b::Node2
+) where {Node1<:AbstractNode,Node2<:AbstractNode} = plus(graph, a, b)
 
 
 @doc "a - b subtraction operator" subtract
@@ -178,8 +178,8 @@ Base.:+(graph::ComputationGraph{TypeValue}, a::Node1, b::Node2
 end
 # overload usual Base.:
 """a - b subtraction operator"""
-Base.:-(graph::ComputationGraph{TypeValue}, a::Node1, b::Node2
-) where {TypeValue,Node1<:AbstractNode,Node2<:AbstractNode} = subtract(graph, a, b)
+Base.:-(graph::ComputationGraph, a::Node1, b::Node2
+) where {Node1<:AbstractNode,Node2<:AbstractNode} = subtract(graph, a, b)
 
 @doc "scalarPlus(a, b) = a .+ b, where a is a scalar" scalarPlus
 @newnode scalarPlus{a,b}::size(b)
@@ -237,10 +237,10 @@ a .+ b broadcast, which maps to plus() or scalarPlus() depending on the sizes of
 """
 function Broadcast.broadcasted(
     ::typeof(+),
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     a::Node1,
     b::Node2
-) where {TypeValue,Node1<:AbstractNode,Node2<:AbstractNode}
+) where {Node1<:AbstractNode,Node2<:AbstractNode}
     if size(a) == size(b)
         # regular sum
         return plus(graph, a, b)
@@ -285,10 +285,10 @@ a .- b broadcast maps to subtract()
 """
 function Broadcast.broadcasted(
     ::typeof(-),
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     a::Node1,
     b::Node2
-) where {TypeValue,Node1<:AbstractNode,Node2<:AbstractNode}
+) where {Node1<:AbstractNode,Node2<:AbstractNode}
     if size(a) == size(b)
         # regular subtract
         return subtract(graph, a, b)
@@ -341,10 +341,10 @@ a .* b broadcast maps to pointTimes() or scalarTimes() depending on the sizes of
 """
 function Broadcast.broadcasted(
     ::typeof(*),
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     a::Node1,
     b::Node2
-) where {TypeValue,Node1<:AbstractNode,Node2<:AbstractNode}
+) where {Node1<:AbstractNode,Node2<:AbstractNode}
     if size(a) == size(b)
         return pointTimes(graph, a, b)
     elseif size(a) == ()
@@ -384,10 +384,10 @@ end
 # overload regular *
 """a * b maps to times() or scalarTimes() depending on the sizes of the arguments"""
 function Base.:*(
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     a::Node1,
     b::Node2
-) where {TypeValue,Node1<:AbstractNode,Node2<:AbstractNode}
+) where {Node1<:AbstractNode,Node2<:AbstractNode}
     if length(size(a)) == 2 && size(a, 2) == size(b, 1)
         return times(graph, a, b)
     elseif size(a) == ()
@@ -503,18 +503,19 @@ end
     return nothing
 end
 
-@doc "dot(x,y) computes the inner product of two vectors" dot
+@doc "dot(x,y) computes the inner product of two vectors" LinearAlgebra.dot
+
 @newnode dot_{a,b}::()
 @inline function cg_dot_!(
     val::TypeArray{TypeValue,0}, a::TypeArray{TypeValue,N}, b::TypeArray{TypeValue,N}
 ) where {TypeValue,N}
     #val = dot(a,b)
-    val[1] = dot(a, b)
+    val[1] = LinearAlgebra.dot(a, b)
     return nothing
 end
 # overload usual LinearAlgebra.:
-LinearAlgebra.dot(graph::ComputationGraph{TypeValue}, a::Node1, b::Node2
-) where {TypeValue,Node1<:AbstractNode,Node2<:AbstractNode} = dot_(graph, a, b)
+LinearAlgebra.dot(graph::ComputationGraph, a::Node1, b::Node2
+) where {Node1<:AbstractNode,Node2<:AbstractNode} = dot_(graph, a, b)
 
 ############
 ## Divisions
@@ -566,10 +567,10 @@ a ./ b broadcast maps to pointDivide() or divideScalar() depending on the sizes 
 """
 function Broadcast.broadcasted(
     ::typeof(/),
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     a::Node1,
     b::Node2
-) where {TypeValue,Node1<:AbstractNode,Node2<:AbstractNode}
+) where {Node1<:AbstractNode,Node2<:AbstractNode}
     if size(a) == size(b)
         return pointDivide(graph, a, b)
     elseif size(a) == ()
@@ -602,8 +603,8 @@ end
 end
 # overload usual Base.:^
 """a ^ b maps to exponentScalar(a,b)"""
-Base.:^(graph::ComputationGraph{TypeValue}, a::Node1, b::Node2
-) where {TypeValue,Node1<:AbstractNode,Node2<:AbstractNode} = exponentScalar(graph, a, b)
+Base.:^(graph::ComputationGraph, a::Node1, b::Node2
+) where {Node1<:AbstractNode,Node2<:AbstractNode} = exponentScalar(graph, a, b)
 
 #########
 ## Affine
@@ -646,7 +647,7 @@ end
     rows::TypeArray{Int,1}
 ) where {TypeValue,N}
     for (i, r) in enumerate(rows)
-        val[i] = b[r] + dot((@view A[r, :]), x)
+        val[i] = b[r] + LinearAlgebra.dot((@view A[r, :]), x)
     end
     return nothing
 end
@@ -724,8 +725,8 @@ struct NodeFindMaxRow{TP<:Tuple,TPI<:Tuple,TV<:AbstractArray,TC} <: ComputationG
     compute!::TC
 end
 export findMaxRow
-findMaxRow(graph::ComputationGraph{TypeValue}, A::T1,
-) where {TypeValue,T1<:AbstractNode} =
+findMaxRow(graph::ComputationGraph, A::T1,
+) where {T1<:AbstractNode} =
     push!(graph, NodeFindMaxRow, cg_findMaxRow!, (), (A.id,), (A.value,), TypeArray{Int}(undef, size(A, 2)), false)
 @inline function cg_findMaxRow!(
     val::TypeArray{Int,1},

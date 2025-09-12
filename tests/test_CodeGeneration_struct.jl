@@ -202,7 +202,8 @@ end
     bmk_input_loss_grad = @benchmark begin
         set!($graph, batchInput_, $batchInput)
         loss = get($graph, loss_)
-        gradient = get($graph, gradient_)
+        #gradient = get($graph, gradient_) # not allocation free
+        compute!($graph, gradient_)
     end evals = 1 samples = nSamples setup = (
         batchInput_ = $training.input;
         loss_ = $training.loss;
@@ -303,31 +304,31 @@ end
 
     setEta(tmp_struct, eta)
     set!(graph, optimizerNodes.eta, eta)
-    @test optimizerNodes.eta.id == 26
-    @test all(tmp_struct.Node26 .== eta)
+    @test optimizerNodes.eta.id == 23
+    @test all(tmp_struct.Node23 .== eta)
 
     #@code_warntype setInferenceInput(tmp_struct, input)
 
     computeAll_parallel(tmp_struct)
 
     ## check correctness
-    @test training.loss.id == 25
-    @show loss = tmp_struct.Node25
+    @test training.loss.id == 22
+    @show loss = tmp_struct.Node22
     @show loss1 = get(graph, training.loss)
     @test norm(loss .- loss1) < 1e-8
 
-    @test optimizerNodes.gradients[1].id == 38
-    @test optimizerNodes.gradients[2].id == 34
-    @test optimizerNodes.gradients[3].id == 30
-    @test optimizerNodes.gradients[4].id == 40
-    @test optimizerNodes.gradients[5].id == 41
-    @test optimizerNodes.gradients[6].id == 42
-    @test norm(get(graph, optimizerNodes.gradients[1]) .- tmp_struct.Node38) < 1e-8
-    @test norm(get(graph, optimizerNodes.gradients[2]) .- tmp_struct.Node34) < 1e-8
-    @test norm(get(graph, optimizerNodes.gradients[3]) .- tmp_struct.Node30) < 1e-8
-    @test norm(get(graph, optimizerNodes.gradients[4]) .- tmp_struct.Node40) < 1e-8
-    @test norm(get(graph, optimizerNodes.gradients[5]) .- tmp_struct.Node41) < 1e-8
-    @test norm(get(graph, optimizerNodes.gradients[6]) .- tmp_struct.Node42) < 1e-8
+    @test optimizerNodes.gradients[1].id == 35
+    @test optimizerNodes.gradients[2].id == 31
+    @test optimizerNodes.gradients[3].id == 27
+    @test optimizerNodes.gradients[4].id == 37
+    @test optimizerNodes.gradients[5].id == 38
+    @test optimizerNodes.gradients[6].id == 39
+    @test norm(get(graph, optimizerNodes.gradients[1]) .- tmp_struct.Node35) < 1e-8
+    @test norm(get(graph, optimizerNodes.gradients[2]) .- tmp_struct.Node31) < 1e-8
+    @test norm(get(graph, optimizerNodes.gradients[3]) .- tmp_struct.Node27) < 1e-8
+    @test norm(get(graph, optimizerNodes.gradients[4]) .- tmp_struct.Node37) < 1e-8
+    @test norm(get(graph, optimizerNodes.gradients[5]) .- tmp_struct.Node38) < 1e-8
+    @test norm(get(graph, optimizerNodes.gradients[6]) .- tmp_struct.Node39) < 1e-8
 
     print(@bold @green "set(batchInput)+computeAll_parallel(): ")
     bmk_CG_all = @benchmark begin
@@ -381,8 +382,8 @@ end
 
     setEta(tmp_struct, eta)
     set!(graph, optimizerNodes.eta, eta)
-    @test optimizerNodes.eta.id == 26
-    @test all(tmp_struct.Node26 .== eta)
+    @test optimizerNodes.eta.id == 23
+    @test all(tmp_struct.Node23 .== eta)
 
     #@code_warntype setInferenceInput(tmp_struct, input)
 
@@ -392,13 +393,13 @@ end
     @test maximum(tmp_struct.cg_counts) == 0
     fill!(tmp_struct.cg_counts, 0)
 
-    @test training.loss.id == 25
-    @test optimizerNodes.gradients[1].id == 38
-    @test optimizerNodes.gradients[2].id == 34
-    @test optimizerNodes.gradients[3].id == 30
-    @test optimizerNodes.gradients[4].id == 40
-    @test optimizerNodes.gradients[5].id == 41
-    @test optimizerNodes.gradients[6].id == 42
+    @test training.loss.id == 22
+    @test optimizerNodes.gradients[1].id == 35
+    @test optimizerNodes.gradients[2].id == 31
+    @test optimizerNodes.gradients[3].id == 27
+    @test optimizerNodes.gradients[4].id == 37
+    @test optimizerNodes.gradients[5].id == 38
+    @test optimizerNodes.gradients[6].id == 39
 
     if false
         get_gradientAsync_parallel(tmp_struct)
@@ -409,21 +410,21 @@ end
     else
         @time for i = 1:nSamples
             setTrainingInput(tmp_struct, batchInput)
-            notify(tmp_struct.Node25valid_needed)
+            notify(tmp_struct.Node22valid_needed)
+            notify(tmp_struct.Node35valid_needed)
+            notify(tmp_struct.Node31valid_needed)
+            notify(tmp_struct.Node27valid_needed)
+            notify(tmp_struct.Node37valid_needed)
             notify(tmp_struct.Node38valid_needed)
-            notify(tmp_struct.Node34valid_needed)
-            notify(tmp_struct.Node30valid_needed)
-            notify(tmp_struct.Node40valid_needed)
-            notify(tmp_struct.Node41valid_needed)
-            notify(tmp_struct.Node42valid_needed)
+            notify(tmp_struct.Node39valid_needed)
 
-            wait(tmp_struct.Node25valid)
+            wait(tmp_struct.Node22valid)
+            wait(tmp_struct.Node35valid)
+            wait(tmp_struct.Node31valid)
+            wait(tmp_struct.Node27valid)
+            wait(tmp_struct.Node37valid)
             wait(tmp_struct.Node38valid)
-            wait(tmp_struct.Node34valid)
-            wait(tmp_struct.Node30valid)
-            wait(tmp_struct.Node40valid)
-            wait(tmp_struct.Node41valid)
-            wait(tmp_struct.Node42valid)
+            wait(tmp_struct.Node39valid)
         end
         println("Counts after loop of $(nSamples) notify+wait:")
         println(tmp_struct.cg_counts)
@@ -432,36 +433,36 @@ end
     end
 
     ## check correctness
-    @test training.loss.id == 25
-    @show loss = tmp_struct.Node25
+    @test training.loss.id == 22
+    @show loss = tmp_struct.Node22
     @show loss1 = get(graph, training.loss)
     @test norm(loss .- loss1) < 1e-8
 
-    @test norm(get(graph, optimizerNodes.gradients[1]) .- tmp_struct.Node38) < 1e-8
-    @test norm(get(graph, optimizerNodes.gradients[2]) .- tmp_struct.Node34) < 1e-8
-    @test norm(get(graph, optimizerNodes.gradients[3]) .- tmp_struct.Node30) < 1e-8
-    @test norm(get(graph, optimizerNodes.gradients[4]) .- tmp_struct.Node40) < 1e-8
-    @test norm(get(graph, optimizerNodes.gradients[5]) .- tmp_struct.Node41) < 1e-8
-    @test norm(get(graph, optimizerNodes.gradients[6]) .- tmp_struct.Node42) < 1e-8
+    @test norm(get(graph, optimizerNodes.gradients[1]) .- tmp_struct.Node35) < 1e-8
+    @test norm(get(graph, optimizerNodes.gradients[2]) .- tmp_struct.Node31) < 1e-8
+    @test norm(get(graph, optimizerNodes.gradients[3]) .- tmp_struct.Node27) < 1e-8
+    @test norm(get(graph, optimizerNodes.gradients[4]) .- tmp_struct.Node37) < 1e-8
+    @test norm(get(graph, optimizerNodes.gradients[5]) .- tmp_struct.Node38) < 1e-8
+    @test norm(get(graph, optimizerNodes.gradients[6]) .- tmp_struct.Node39) < 1e-8
 
     print(@bold @green "set(batchInput)+computeAsync_parallel(loss,grad): ")
     bmk_CG_input_loss_grad = @benchmark begin
         setTrainingInput(s, $batchInput)
-        notify(s.Node25valid_needed)
+        notify(s.Node22valid_needed)
+        notify(s.Node35valid_needed)
+        notify(s.Node31valid_needed)
+        notify(s.Node27valid_needed)
+        notify(s.Node37valid_needed)
         notify(s.Node38valid_needed)
-        notify(s.Node34valid_needed)
-        notify(s.Node30valid_needed)
-        notify(s.Node40valid_needed)
-        notify(s.Node41valid_needed)
-        notify(s.Node42valid_needed)
+        notify(s.Node39valid_needed)
 
-        wait(s.Node25valid)
+        wait(s.Node22valid)
+        wait(s.Node35valid)
+        wait(s.Node31valid)
+        wait(s.Node27valid)
+        wait(s.Node37valid)
         wait(s.Node38valid)
-        wait(s.Node34valid)
-        wait(s.Node30valid)
-        wait(s.Node40valid)
-        wait(s.Node41valid)
-        wait(s.Node42valid)
+        wait(s.Node39valid)
     end evals = 1 samples = nSamples setup = (s = $tmp_struct)
     display(bmk_CG_input_loss_grad)
     @test bmk_CG_input_loss_grad.allocs == 0

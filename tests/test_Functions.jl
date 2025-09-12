@@ -8,7 +8,7 @@ using ComputationGraphs
 using Test
 
 @testset "test: relu(constant)" begin
-    g = ComputationGraph{Float64}()
+    g = ComputationGraph(Float64)
 
     x_ = [1.0, 2.0, -3.0, 0.0]
     x = constant(g, x_)
@@ -23,7 +23,7 @@ using Test
 end
 
 @testset "test: relu(variable)" begin
-    g = ComputationGraph{Float64}()
+    g = ComputationGraph(Float64)
 
     x_ = [1.0, 2.0, -3.0, 0.0]
     x = variable(g, size(x_))
@@ -39,7 +39,7 @@ end
 end
 
 @testset "test: heaviside(constant)" begin
-    g = ComputationGraph{Float64}()
+    g = ComputationGraph(Float64)
 
     x_ = [1.0, 2.0, -3.0, 0.0]
     x = constant(g, x_)
@@ -55,7 +55,7 @@ end
 
 
 @testset "test: sign(constant)" begin
-    g = ComputationGraph{Float64}()
+    g = ComputationGraph(Float64)
 
     x_ = [1.0, 2.0, -3.0, 0.0, 0.1, -0.3]
     x = constant(g, x_)
@@ -70,7 +70,7 @@ end
 end
 
 @testset "test: sat(constant)" begin
-    g = ComputationGraph{Float64}()
+    g = ComputationGraph(Float64)
 
     x_ = [1.0, 2.0, -3.0, 0.0, 0.1, -0.3]
     x = constant(g, x_)

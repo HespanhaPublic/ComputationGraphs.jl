@@ -4,7 +4,7 @@ using Unrolled
 ## Variable nodes
 #################
 
-@inline cg_nothing!(val::TypeArray{TypeValue,N}) where {TypeValue,N} = nothing
+@inline cg_nothing!(val::TV) where {TV<:AbstractArray} = nothing
 
 @doc """
     variable(graph,dims)
@@ -14,7 +14,7 @@ using Unrolled
 Creates a variable of the given dimension
 
 # Parameters:
-+ `graph::ComputationGraph{TypeValue}`: Computation graph where variable will be stored.
++ `graph::ComputationGraph`: Computation graph where variable will be stored.
 + `dims::NTuple{N,Int}`: Desired dimension of the variable. An empty tuple () results in a scalar variable.
 + `value::AbstractArray`: Initial value for the variable, which implicitly defines its dimension.
         If `value` is a scalar, it is first converted to a 0-dimensional array using `fill(value)`.
@@ -35,43 +35,38 @@ struct NodeVariable{TP<:Tuple,TPI<:Tuple,TV<:AbstractArray,TC} <: AbstractNode
     value::TV
     compute!::TC
 end
-variable(graph::ComputationGraph{TypeValue}, dims::NTuple{N,Int}) where {TypeValue,N} =
+variable(graph::ComputationGraph, dims::NTuple{N,Int}) where {N} =
     push!(graph, NodeVariable, cg_variable!, (), (), (), dims)
-variable(graph::ComputationGraph{TypeValue}, type::DataType, dims::NTuple{N,Int}) where {TypeValue,N} =
+variable(graph::ComputationGraph, type::DataType, dims::NTuple{N,Int}) where {N} =
     push!(graph, NodeVariable, cg_variable!, (), (), (), type, dims)
-function variable(graph::ComputationGraph{TypeValue}, val::TV) where {TypeValue,TV<:AbstractArray}
-    if eltype(val) != TypeValue
+function variable(graph::ComputationGraph, val::TV) where {TV<:AbstractArray}
+    if eltype(val) != graph.TypeValue
         #error("variable: type of value does not match graph's default type")
-        @warn("variable: value type=$(eltype(val)) does not match graph's default type $(TypeValue), you can explicitly include the type in variable() to avoid this warning")
+        @warn("variable: value type=$(eltype(val)) does not match graph's default type $(graph.TypeValue), you can explicitly include the type in variable() to avoid this warning")
     end
     return push!(graph, NodeVariable, cg_variable!, (), (), (), val, true)
 end
-function variable(graph::ComputationGraph{TypeValue}, type::DataType, val::TV
-) where {TypeValue,TV<:AbstractArray}
+function variable(graph::ComputationGraph, type::DataType, val::TV
+) where {TV<:AbstractArray}
     if eltype(val) != type
         error("variable: type=$(type) does not match value type=$(eltype(val))")
     end
     return push!(graph, NodeVariable, cg_variable!, (), (), (), val, true)
 end
-variable(graph::ComputationGraph{TypeValue}, val::V) where {TypeValue,V<:Number} =
+variable(graph::ComputationGraph, val::V) where {V<:Number} =
     variable(graph, fill(val)) # scalar
 
 
 # shortcuts for scalars, vectors, and matrices
-variable(graph::ComputationGraph{TypeValue}) where {TypeValue} =
-    variable(graph, ())
-variable(graph::ComputationGraph{TypeValue}, n1::Int) where {TypeValue} =
-    variable(graph, (n1,))
-variable(graph::ComputationGraph{TypeValue}, n1::Int, n2::Int) where {TypeValue} =
-    variable(graph, (n1, n2))
-variable(graph::ComputationGraph{TypeValue}, type::DataType) where {TypeValue} =
-    variable(graph, type, ())
-variable(graph::ComputationGraph{TypeValue}, type::DataType, n1::Int) where {TypeValue} =
-    variable(graph, type, (n1,))
-variable(graph::ComputationGraph{TypeValue}, type::DataType, n1::Int, n2::Int) where {TypeValue} =
+variable(graph::ComputationGraph) = variable(graph, ())
+variable(graph::ComputationGraph, n1::Int) = variable(graph, (n1,))
+variable(graph::ComputationGraph, n1::Int, n2::Int) = variable(graph, (n1, n2))
+variable(graph::ComputationGraph, type::DataType) = variable(graph, type, ())
+variable(graph::ComputationGraph, type::DataType, n1::Int) = variable(graph, type, (n1,))
+variable(graph::ComputationGraph, type::DataType, n1::Int, n2::Int) =
     variable(graph, type, (n1, n2))
 
-function cg_variable!(val::TypeArray{TypeValue,N}) where {TypeValue,N}
+function cg_variable!(val::TV) where {TV<:AbstractArray}
     error("trying to \"compute\" un-initialized variable (type=$(typeof(val)), size=$(size(val))")
     return nothing
 end
@@ -94,10 +89,10 @@ Update a variable node
 + mark all the children as having invalid values
 """
 function set!(
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     node::NodeVariable{Tuple{},Tuple{},TV,TC},
     value::TV2 # allow for different (but compatible) abstract arrays
-) where {TypeValue,TV<:AbstractArray,TC,TV2<:AbstractArray}
+) where {TV<:AbstractArray,TC,TV2<:AbstractArray}
     t0 = time_ns()
     id::Int = node.id
     set_node!(node, value)
@@ -112,10 +107,10 @@ function set!(
 end
 # allow scalar input
 function set!(
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     node::NodeVariable{Tuple{},Tuple{},TV,TC},
     value::V
-) where {TypeValue,TV<:AbstractArray,V<:Number,TC}
+) where {TV<:AbstractArray,V<:Number,TC}
     t0 = time_ns()
     id::Int = node.id
     set_node!(node, value)
@@ -129,10 +124,10 @@ function set!(
     return nothing
 end
 @unroll function set!(
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     nodes::NTuple{N,Any},
     values::NTuple{N,Any},
-) where {TypeValue,N}
+) where {N}
     @unroll for k in 1:length(nodes)
         @inbounds node = nodes[k]
         t0 = time_ns()
@@ -149,11 +144,11 @@ end
     return nothing
 end
 @unroll function set!(
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     # Names must match (in order to be able to use unroll)
     nodes::NamedTuple{Names,Values1},
     values::NamedTuple{Names,Values2},
-) where {TypeValue,Names,Values1,Values2}
+) where {Names,Values1,Values2}
     @unroll for k in 1:length(nodes) # only valid if names match in order
         #for k in eachindex(destinations) # this would allow unmatched orders, but @unroll would not work
         @inbounds node = nodes[k]
@@ -203,10 +198,10 @@ end
 + mark all children of the destination node as having invalid values
 """
 function Base.copyto!(
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     dest::NodeVariable{Tuple{},Tuple{},TV,TC},
     src::Node
-) where {TypeValue,TV<:AbstractArray,TC,Node<:AbstractNode}
+) where {TV<:AbstractArray,TC,Node<:AbstractNode}
     #copyto!(dest.value, src.value)
     t0 = time_ns()
     copyto_node!(dest, src) # TODO faster ???
@@ -221,10 +216,10 @@ function Base.copyto!(
 end
 # tuple version
 @unroll function Base.copyto!(
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     destinations::NTuple{N,Any},
     sources::NTuple{N,Any},
-) where {TypeValue,N}
+) where {N}
     @unroll for k in 1:length(destinations)
         t0 = time_ns()
         @inbounds copyto_node!(destinations[k], sources[k]) # TODO faster ???
@@ -240,11 +235,11 @@ end
 end
 
 @unroll function Base.copyto!(
-    graph::ComputationGraph{TypeValue},
+    graph::ComputationGraph,
     # Names must match (in order to be able to use unroll)
     destinations::NamedTuple{Names,Values1},
     sources::NamedTuple{Names,Values2},
-) where {TypeValue,Names,Values1,Values2}
+) where {Names,Values1,Values2}
     @unroll for k in 1:length(destinations) # only valid if names match in order
         #for k in eachindex(destinations) # this would allow unmatched orders, but @unroll would not work
         t0 = time_ns()
@@ -281,7 +276,7 @@ end
 Creates a (constant) array equal to the given value. 
 
 # Parameters:
-+ `graph::ComputationGraph{TypeValue}`: Computation graph where the array will be stored.
++ `graph::ComputationGraph`: Computation graph where the array will be stored.
 + `value::AbstractArray`: Desired value for the array. 
         If `value` is a scalar, it is first converted to a 0-dimensional array using `fill(value)`.
 
@@ -302,23 +297,23 @@ struct NodeConstant{TP<:Tuple,TPI<:Tuple,TV<:AbstractArray,TC} <: AbstractNode
     compute!::TC
 end
 function constant(
-    graph::ComputationGraph{TypeValue}, val::TV
-) where {TypeValue,TV<:AbstractArray}
-    if eltype(val) != TypeValue
+    graph::ComputationGraph, val::TV
+) where {TV<:AbstractArray}
+    if eltype(val) != graph.TypeValue
         #error("constant: type of value does not match graph's default type")
-        @warn("constant: value type=$(eltype(val)) does not match graph's default type $(TypeValue), you can explicitly include the type in constant() to avoid this warning")
+        @warn("constant: value type=$(eltype(val)) does not match graph's default type $(graph.TypeValue), you can explicitly include the type in constant() to avoid this warning")
     end
     return push!(graph, NodeConstant, cg_nothing!, (), (), (), val, true)
 end
 function constant(
-    graph::ComputationGraph{TypeValue}, type::DataType, val::TV
-) where {TypeValue,TV<:AbstractArray}
+    graph::ComputationGraph, type::DataType, val::TV
+) where {TV<:AbstractArray}
     if eltype(val) != type
         error("constant: type=$(type) does not match value type=$(eltype(val))")
     end
     return push!(graph, NodeConstant, cg_nothing!, (), (), (), val, true)
 end
-constant(graph::ComputationGraph{TypeValue}, val::V) where {TypeValue,V<:Number} =
+constant(graph::ComputationGraph, val::V) where {V<:Number} =
     constant(graph, fill(val)) # scalar
 
 @inline compute!(::NodeConstant) = nothing
@@ -334,7 +329,7 @@ constant(graph::ComputationGraph{TypeValue}, val::V) where {TypeValue,V<:Number}
 Creates an array filled with 0's
 
 # Parameters:
-+ `graph::ComputationGraph{TypeValue}`: computation graph where the array will be stored
++ `graph::ComputationGraph`: computation graph where the array will be stored
 + `dims::NTuple{N,Int}`: dimension of the array
 
 # Returns:
@@ -351,22 +346,17 @@ struct NodeZeros{TP<:Tuple,TPI<:Tuple,TV<:AbstractArray,TC} <: AbstractNode
     value::TV      # wasteful, but currently only way to track dimension
     compute!::TC
 end
-Base.zeros(graph::ComputationGraph{TypeValue}, dims::NTuple{N,Int}) where {TypeValue,N} =
-    push!(graph, NodeZeros, cg_nothing!, (), (), (), zeros(TypeValue, dims), true)
-Base.zeros(graph::ComputationGraph{TypeValue}, type::DataType, dims::NTuple{N,Int}) where {TypeValue,N} =
+Base.zeros(graph::ComputationGraph, dims::NTuple{N,Int}) where {N} =
+    push!(graph, NodeZeros, cg_nothing!, (), (), (), zeros(graph.TypeValue, dims), true)
+Base.zeros(graph::ComputationGraph, type::DataType, dims::NTuple{N,Int}) where {N} =
     push!(graph, NodeZeros, cg_nothing!, (), (), (), zeros(type, dims), true)
 # shortcuts for scalars, vectors, and matrices
-Base.zeros(graph::ComputationGraph{TypeValue}) where {TypeValue} =
-    zeros(graph, ())
-Base.zeros(graph::ComputationGraph{TypeValue}, n1::Int) where {TypeValue} =
-    zeros(graph, (n1,))
-Base.zeros(graph::ComputationGraph{TypeValue}, n1::Int, n2::Int) where {TypeValue} =
-    zeros(graph, (n1, n2))
-Base.zeros(graph::ComputationGraph{TypeValue}, type::DataType) where {TypeValue} =
-    zeros(graph, type, ())
-Base.zeros(graph::ComputationGraph{TypeValue}, type::DataType, n1::Int) where {TypeValue} =
-    zeros(graph, type, (n1,))
-Base.zeros(graph::ComputationGraph{TypeValue}, type::DataType, n1::Int, n2::Int) where {TypeValue} =
+Base.zeros(graph::ComputationGraph) = zeros(graph, ())
+Base.zeros(graph::ComputationGraph, n1::Int) = zeros(graph, (n1,))
+Base.zeros(graph::ComputationGraph, n1::Int, n2::Int) = zeros(graph, (n1, n2))
+Base.zeros(graph::ComputationGraph, type::DataType) = zeros(graph, type, ())
+Base.zeros(graph::ComputationGraph, type::DataType, n1::Int) = zeros(graph, type, (n1,))
+Base.zeros(graph::ComputationGraph, type::DataType, n1::Int, n2::Int) =
     zeros(graph, type, (n1, n2))
 
 @inline compute!(::NodeZeros) = nothing
@@ -382,7 +372,7 @@ Base.zeros(graph::ComputationGraph{TypeValue}, type::DataType, n1::Int, n2::Int)
 Creates an array filled with 1's
 
 # Parameters:
-+ `graph::ComputationGraph{TypeValue}`: computation graph where array will be stored
++ `graph::ComputationGraph`: computation graph where array will be stored
 + `dims::NTuple{N,Int}`: dimension of the array
 
 # Returns:
@@ -401,22 +391,17 @@ struct NodeOnes{TP<:Tuple,TPI<:Tuple,TV<:AbstractArray,TC} <: AbstractNode
 end
 
 # TODO These vector should be shortcutted for products
-Base.ones(graph::ComputationGraph{TypeValue}, dims::NTuple{N,Int}) where {TypeValue,N} =
-    push!(graph, NodeOnes, cg_nothing!, (), (), (), ones(TypeValue, dims), true)
-Base.ones(graph::ComputationGraph{TypeValue}, type::DataType, dims::NTuple{N,Int}) where {TypeValue,N} =
+Base.ones(graph::ComputationGraph, dims::NTuple{N,Int}) where {N} =
+    push!(graph, NodeOnes, cg_nothing!, (), (), (), ones(graph.TypeValue, dims), true)
+Base.ones(graph::ComputationGraph, type::DataType, dims::NTuple{N,Int}) where {N} =
     push!(graph, NodeOnes, cg_nothing!, (), (), (), ones(type, dims), true)
 # shortcuts for scalars, vectors, and matrices
-Base.ones(graph::ComputationGraph{TypeValue}) where {TypeValue} =
-    ones(graph, ())
-Base.ones(graph::ComputationGraph{TypeValue}, n1::Int) where {TypeValue} =
-    ones(graph, (n1,))
-Base.ones(graph::ComputationGraph{TypeValue}, n1::Int, n2::Int) where {TypeValue} =
-    ones(graph, (n1, n2))
-Base.ones(graph::ComputationGraph{TypeValue}, type::DataType) where {TypeValue} =
-    ones(graph, type, ())
-Base.ones(graph::ComputationGraph{TypeValue}, type::DataType, n1::Int) where {TypeValue} =
-    ones(graph, type, (n1,))
-Base.ones(graph::ComputationGraph{TypeValue}, type::DataType, n1::Int, n2::Int) where {TypeValue} =
+Base.ones(graph::ComputationGraph) = ones(graph, ())
+Base.ones(graph::ComputationGraph, n1::Int) = ones(graph, (n1,))
+Base.ones(graph::ComputationGraph, n1::Int, n2::Int) = ones(graph, (n1, n2))
+Base.ones(graph::ComputationGraph, type::DataType) = ones(graph, type, ())
+Base.ones(graph::ComputationGraph, type::DataType, n1::Int) = ones(graph, type, (n1,))
+Base.ones(graph::ComputationGraph, type::DataType, n1::Int, n2::Int) =
     ones(graph, type, (n1, n2))
 
 @inline compute!(::NodeOnes) = nothing
@@ -433,6 +418,9 @@ Creates the k-th vector of the canonical basis for the linear space with dimensi
 """ ComputationGraphs.unitvector
 export unitvector
 
+"""
+Node of a computation graph used to represent vectors of the canonical basis.
+"""
 struct NodeUnitVector{TP<:Tuple,TPI<:Tuple,TV<:AbstractArray,TC} <: AbstractNode
     id::Int
     parameters::TP
@@ -440,9 +428,9 @@ struct NodeUnitVector{TP<:Tuple,TPI<:Tuple,TV<:AbstractArray,TC} <: AbstractNode
     value::TV     # wasteful, but currently only way to track dimension
     compute!::TC
 end
-unitvector(graph::ComputationGraph{TypeValue}, dims::NTuple{N,Int}, k::Int) where {TypeValue,N} =
-    push!(graph, NodeUnitVector, cg_nothing!, (k,), (), (), unitvector(TypeValue, dims, k), true)
-unitvector(graph::ComputationGraph{TypeValue}, type::DataType, dims::NTuple{N,Int}, k::Int) where {TypeValue,N} =
+unitvector(graph::ComputationGraph, dims::NTuple{N,Int}, k::Int) where {N} =
+    push!(graph, NodeUnitVector, cg_nothing!, (k,), (), (), unitvector(graph.TypeValue, dims, k), true)
+unitvector(graph::ComputationGraph, type::DataType, dims::NTuple{N,Int}, k::Int) where {N} =
     push!(graph, NodeUnitVector, cg_nothing!, (k,), (), (), unitvector(type, dims, k), true)
 
 @inline compute!(::NodeUnitVector) = nothing
