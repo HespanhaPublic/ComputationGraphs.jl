@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Representation of computation graphs · ComputationGraphs</title><meta name="title" content="Representation of computation graphs · ComputationGraphs"/><meta property="og:title" content="Representation of computation graphs · ComputationGraphs"/><meta property="twitter:title" content="Representation of computation graphs · ComputationGraphs"/><meta name="description" content="Documentation for ComputationGraphs."/><meta property="og:description" content="Documentation for ComputationGraphs."/><meta property="twitter:description" content="Documentation for ComputationGraphs."/><meta property="og:url" content="https://documenter.juliadocs.org/stable/lib_representation.html"/><meta property="twitter:url" content="https://documenter.juliadocs.org/stable/lib_representation.html"/><link rel="canonical" href="https://documenter.juliadocs.org/stable/lib_representation.html"/><script data-outdated-warner src="assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="search_index.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="index.html">ComputationGraphs</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="index.html">Home</a></li><li><span class="tocitem">User manual</span><ul><li><a class="tocitem" href="man_guide.html">Basics</a></li><li><a class="tocitem" href="man_differentiation.html">Symbolic differentiation</a></li><li><a class="tocitem" href="man_recipes.html">Recipes</a></li><li><a class="tocitem" href="man_code_generation.html">Code generation</a></li><li><a class="tocitem" href="examples.html">Examples</a></li></ul></li><li><span class="tocitem">Reference</span><ul><li class="is-active"><a class="tocitem" href="lib_representation.html">Representation of computation graphs</a><ul class="internal"><li><a class="tocitem" href="#Computation-nodes"><span>Computation nodes</span></a></li><li><a class="tocitem" href="#Conditional-computations"><span>Conditional computations</span></a></li><li><a class="tocitem" href="#Parallel-computations"><span>Parallel computations</span></a></li></ul></li><li><a class="tocitem" href="lib_public.html">API</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Reference</a></li><li class="is-active"><a href="lib_representation.html">Representation of computation graphs</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href="lib_representation.html">Representation of computation graphs</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/HespanhaPublic/ComputationGraphs.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/HespanhaPublic/ComputationGraphs.jl/blob/main/docs/src/lib_representation.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Representation-of-computation-graphs"><a class="docs-heading-anchor" href="#Representation-of-computation-graphs">Representation of computation graphs</a><a id="Representation-of-computation-graphs-1"></a><a class="docs-heading-anchor-permalink" href="#Representation-of-computation-graphs" title="Permalink"></a></h1><p>This section of the manual documents the inner workings of the graph computation functions in the source file <a href="https://github.com/hespanha/ComputationGraphs/blob/main/src/Compute.jl">src/compute.jl</a>.</p><div class="admonition is-warning" id="Warning-8af2af594d3cc804"><header class="admonition-header">Warning<a class="admonition-anchor" href="#Warning-8af2af594d3cc804" title="Permalink"></a></header><div class="admonition-body"><p>The timing information reported here is obtained by running <code>Documenter</code>&#39;s <code>@example</code> triggered by a Github action. Because of this, there is no control over the hardware used and consequently the timing values that appear in this document are not very reliable; especially in what regards <a href="lib_representation.html#Parallel-computations">Parallel computations</a>.</p></div></div><h2 id="Computation-nodes"><a class="docs-heading-anchor" href="#Computation-nodes">Computation nodes</a><a id="Computation-nodes-1"></a><a class="docs-heading-anchor-permalink" href="#Computation-nodes" title="Permalink"></a></h2><p>An expression like <code>A*x+b</code> contains</p><ul><li>three nodes <code>A</code>, <code>b</code>, and <code>x</code> that corresponds to variables, and</li><li>two computation nodes, one for the multiplication and the other for the addition.</li></ul><p>Since we are aiming for allocation-free computation, we start by pre-allocating memory for all nodes</p><pre><code class="language-julia hljs">using Random
+A = rand(Float64,400,30)  # pre-allocated storage for the variable A
+x = rand(Float64,30)     # pre-allocated storage for the variable b
+b = rand(Float64,400)     # pre-allocated storage for the variable x
+Ax = similar(b)          # pre-allocated storage for the computation node A*x
+Axb = similar(b)         # pre-allocated storage for the computation node A*x+b</code></pre><p>and associate to the following functions to the two computation nodes:</p><pre><code class="language-julia hljs">using LinearAlgebra
+function node_Ax!(out::Vector{F},in1::Matrix{F}, in2::Vector{F}) where {F}
+    mul!(out,in1,in2)
+end
+function node_Axb!(out::Vector{F},in1::Vector{F}, in2::Vector{F}) where {F}
+    @. out = in1 + in2
+end</code></pre><p>It would be temping to construct the computation graph out of such functions. However, every function in julia has is own unique type (all subtypes of the <code>Function</code> abstract type). This is problematic because we will often need to iterate over the nodes of a graph, e.g., to re-evaluate all nodes in the graph or just the parents of a specific node. If all nodes have a unique type, then such iterations not be type-stable.</p><p>To resolve this issue we do two &quot;semantic&quot; transformations to the functions above: <a href="https://docs.julialang.org/en/v1/devdocs/functions/#Closures">function closure</a> and function wrapping with the package <a href="https://github.com/JuliaLang/FunctionWrappers.jl">FunctionWrappers</a>.</p><h3 id="Function-closure"><a class="docs-heading-anchor" href="#Function-closure">Function closure</a><a id="Function-closure-1"></a><a class="docs-heading-anchor-permalink" href="#Function-closure" title="Permalink"></a></h3><p><a href="https://docs.julialang.org/en/v1/devdocs/functions/#Closures">Function closure</a> allow us to obtain functions for all the nodes that &quot;look the same&quot; in the following sense:</p><ul><li>they all have they have the same signature (i.e., same number of input parameters and with the   same types), and</li><li>they all return a value of the same type.</li></ul><p>Specifically, we &quot;capture&quot; the input parameters for the two computation nodes, which makes them look like parameter-free functions that return nothing:</p><pre><code class="language-julia hljs">@inline node_Ax_closed!() = let  Ax=Ax , A=A, x=x
+    node_Ax!(Ax,A,x)
+    nothing
+    end
+@inline node_Axb_closed!() = let Axb=Axb, Ax=Ax, b=b
+    node_Axb!(Axb,Ax,b)
+    nothing
+    end</code></pre><div class="admonition is-info" id="Note-19bcb382eb1be0c7"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-19bcb382eb1be0c7" title="Permalink"></a></header><div class="admonition-body"><p>See <a href="https://docs.julialang.org/en/v1/manual/performance-tips/#man-performance-captured">Performance tips on the performance of captured variables</a> on the use of <code>let</code>, which essentially helps the parser by &quot;fixing&quot; the captured variable. To be precise &quot;fixing&quot; the arrays, but not the values of their entries.</p></div></div><h3 id="Function-wrapping"><a class="docs-heading-anchor" href="#Function-wrapping">Function wrapping</a><a id="Function-wrapping-1"></a><a class="docs-heading-anchor-permalink" href="#Function-wrapping" title="Permalink"></a></h3><p>Even though all node functions now have similar inputs and outputs, they are still not of the same type (as far as julia is concerned). To fix this issue, we use the package <a href="https://github.com/JuliaLang/FunctionWrappers.jl">FunctionWrappers</a> to create a type-stable wrapper:</p><pre><code class="language-julia hljs">import ComputationGraphs
+node_Ax_wrapped = ComputationGraphs.FunctionWrapper(node_Ax_closed!)
+node_Axb_wrapped = ComputationGraphs.FunctionWrapper(node_Axb_closed!)</code></pre><p>The &quot;wrapped&quot; functions can be called directly with:</p><pre><code class="language-julia hljs">begin # hide
+node_Ax_wrapped()
+node_Axb_wrapped()
+nothing # hide
+end # hide</code></pre><p>or a little faster with</p><pre><code class="language-julia hljs">ComputationGraphs.do_ccall(node_Ax_wrapped)
+ComputationGraphs.do_ccall(node_Axb_wrapped)</code></pre><div class="admonition is-warning" id="Warning-864abde3e4cb8dc5"><header class="admonition-header">Warning<a class="admonition-anchor" href="#Warning-864abde3e4cb8dc5" title="Permalink"></a></header><div class="admonition-body"><p>The code above does not actually use <a href="https://github.com/JuliaLang/FunctionWrappers.jl">FunctionWrappers</a>; instead it uses a very simplified version of <a href="https://github.com/JuliaLang/FunctionWrappers.jl">FunctionWrappers</a> that can only wrap functions with no arguments that always return <code>nothing</code>.</p><p>To use <a href="https://github.com/JuliaLang/FunctionWrappers.jl">FunctionWrappers</a>, we would have used instead</p><pre><code class="language-julia hljs">import FunctionWrappers
+node_Ax_wrapped_FW = FunctionWrappers.FunctionWrapper{Nothing,Tuple{}}(node_Ax_closed!)
+node_Axb_wrapped_FW = FunctionWrappers.FunctionWrapper{Nothing,Tuple{}}(node_Axb_closed!)</code></pre><p>and the functions would be called with</p><pre><code class="language-julia hljs">begin # hide
+FunctionWrappers.do_ccall(node_Ax_wrapped_FW, ())
+FunctionWrappers.do_ccall(node_Axb_wrapped_FW, ())
+nothing # hide
+end # hide</code></pre></div></div><h3 id="Verification"><a class="docs-heading-anchor" href="#Verification">Verification</a><a id="Verification-1"></a><a class="docs-heading-anchor-permalink" href="#Verification" title="Permalink"></a></h3><p>We can now check the fruits of our work.</p><ul><li>Type stability?</li></ul><pre><code class="language-julia hljs">println(&quot;Type stability for original: &quot;, typeof(node_Ax!)==typeof(node_Axb!))
+println(&quot;Type stability for wrapped : &quot;, typeof(node_Ax_wrapped)==typeof(node_Axb_wrapped))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Type stability for original: false
+Type stability for wrapped : true</code></pre><ul><li>Correctness?</li></ul><pre><code class="language-julia hljs">rand!(A)
+rand!(b)
+rand!(x)
+
+# the original functions
+node_Ax!(Ax,A,x)
+node_Axb!(Axb,Ax,b)
+println(&quot;Correctness for original: &quot;, Axb==(A*x+b))
+
+rand!(A)
+rand!(b)
+rand!(x)
+
+# the new functions
+ComputationGraphs.do_ccall(node_Ax_wrapped)
+ComputationGraphs.do_ccall(node_Axb_wrapped)
+println(&quot;Correctness for wrapped : &quot;, Axb==(A*x+b))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Correctness for original: true
+Correctness for wrapped : true</code></pre><ul><li>Speed?</li></ul><pre><code class="language-julia hljs">using BenchmarkTools, Printf
+@show Threads.nthreads()
+BLAS.set_num_threads(1)
+@show BLAS.get_num_threads()
+@show Base.JLOptions().opt_level
+
+bmk1 = @benchmark begin
+    node_Ax!($Ax,$A,$x)
+    node_Axb!($Axb,$Ax,$b)
+end evals=1000 samples=10000
+
+bmk3 = @benchmark begin
+    node_Ax_closed!()
+    node_Axb_closed!()
+end evals=1000 samples=10000
+
+bmk2 = @benchmark begin
+    ComputationGraphs.do_ccall($node_Ax_wrapped)
+    ComputationGraphs.do_ccall($node_Axb_wrapped)
+end evals=1000 samples=10000
+
+@printf(&quot;Overhead due to closure  = %3.f ns\n&quot;,median(bmk3.times)-median(bmk1.times))
+@printf(&quot;Overhead due to wrapping = %3.f ns\n&quot;,median(bmk2.times)-median(bmk3.times))
+@printf(&quot;Total overhead           = %3.f ns\n&quot;,median(bmk2.times)-median(bmk1.times))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Threads.nthreads() = 2
+BLAS.get_num_threads() = 1
+(Base.JLOptions()).opt_level = 2
+Original:
+BenchmarkTools.Trial: 10000 samples with 1000 evaluations per sample.
+ Range <span class="sgr90">(</span><span class="sgr36"><span class="sgr1">min</span></span> … <span class="sgr35">max</span><span class="sgr90">):  </span><span class="sgr36"><span class="sgr1">1.162 μs</span></span> … <span class="sgr35"> 2.461 μs</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>min … max<span class="sgr90">): </span>0.00% … 0.00%
+ Time  <span class="sgr90">(</span><span class="sgr34"><span class="sgr1">median</span></span><span class="sgr90">):     </span><span class="sgr34"><span class="sgr1">1.195 μs              </span></span><span class="sgr90">┊</span> GC <span class="sgr90">(</span>median<span class="sgr90">):    </span>0.00%
+ Time  <span class="sgr90">(</span><span class="sgr32"><span class="sgr1">mean</span></span> ± <span class="sgr32">σ</span><span class="sgr90">):   </span><span class="sgr32"><span class="sgr1">1.196 μs</span></span> ± <span class="sgr32">43.078 ns</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>mean ± σ<span class="sgr90">):  </span>0.00% ± 0.00%
+
+                        ▃▇█<span class="sgr34">▆</span><span class="sgr32">▃</span>▁                               
+  ▁▂▄▅▅▅▄▃▃▃▃▃▄▃▃▃▃▃▂▂▂▇███<span class="sgr34">█</span><span class="sgr32">█</span>█▇▇▇█▆▆▄▅▄▃▃▃▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ ▃
+  1.16 μs<span class="sgr90">        Histogram: frequency by time</span>        1.24 μs <span class="sgr1">&lt;</span>
+
+ Memory estimate<span class="sgr90">: </span><span class="sgr33">0 bytes</span>, allocs estimate<span class="sgr90">: </span><span class="sgr33">0</span>.
+Closure:
+BenchmarkTools.Trial: 10000 samples with 1000 evaluations per sample.
+ Range <span class="sgr90">(</span><span class="sgr36"><span class="sgr1">min</span></span> … <span class="sgr35">max</span><span class="sgr90">):  </span><span class="sgr36"><span class="sgr1">1.197 μs</span></span> … <span class="sgr35"> 2.144 μs</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>min … max<span class="sgr90">): </span>0.00% … 0.00%
+ Time  <span class="sgr90">(</span><span class="sgr34"><span class="sgr1">median</span></span><span class="sgr90">):     </span><span class="sgr34"><span class="sgr1">1.223 μs              </span></span><span class="sgr90">┊</span> GC <span class="sgr90">(</span>median<span class="sgr90">):    </span>0.00%
+ Time  <span class="sgr90">(</span><span class="sgr32"><span class="sgr1">mean</span></span> ± <span class="sgr32">σ</span><span class="sgr90">):   </span><span class="sgr32"><span class="sgr1">1.219 μs</span></span> ± <span class="sgr32">18.150 ns</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>mean ± σ<span class="sgr90">):  </span>0.00% ± 0.00%
+
+  ▄▇▄▄▃▁ ▁▃▄▃▂▂▃▂▁▂▁▁▁▁ ▁▁ <span class="sgr32"> </span> ▁█<span class="sgr34">▇</span>▅▅▃▂▂▂▆▅▃▃▃▃▂▁    ▁▁▁        ▂
+  █████████████████████████<span class="sgr32">█</span>▇██<span class="sgr34">█</span>██████████████▇█▇████▇▇▆▆▅▅▇ █
+  1.2 μs<span class="sgr90">       Histogram: <span class="sgr1">log(</span>frequency<span class="sgr1">)</span> by time</span>     1.25 μs <span class="sgr1">&lt;</span>
+
+ Memory estimate<span class="sgr90">: </span><span class="sgr33">0 bytes</span>, allocs estimate<span class="sgr90">: </span><span class="sgr33">0</span>.
+Wrapped:
+BenchmarkTools.Trial: 10000 samples with 1000 evaluations per sample.
+ Range <span class="sgr90">(</span><span class="sgr36"><span class="sgr1">min</span></span> … <span class="sgr35">max</span><span class="sgr90">):  </span><span class="sgr36"><span class="sgr1">1.207 μs</span></span> … <span class="sgr35"> 2.489 μs</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>min … max<span class="sgr90">): </span>0.00% … 0.00%
+ Time  <span class="sgr90">(</span><span class="sgr34"><span class="sgr1">median</span></span><span class="sgr90">):     </span><span class="sgr34"><span class="sgr1">1.237 μs              </span></span><span class="sgr90">┊</span> GC <span class="sgr90">(</span>median<span class="sgr90">):    </span>0.00%
+ Time  <span class="sgr90">(</span><span class="sgr32"><span class="sgr1">mean</span></span> ± <span class="sgr32">σ</span><span class="sgr90">):   </span><span class="sgr32"><span class="sgr1">1.238 μs</span></span> ± <span class="sgr32">36.247 ns</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>mean ± σ<span class="sgr90">):  </span>0.00% ± 0.00%
+
+                          ▁▄<span class="sgr34">█</span><span class="sgr32"> </span>                               
+  ▁▄▆▃▂▁▁▂▃▂▂▂▂▂▁▁▁▁▂▂▁▁▂███<span class="sgr34">█</span><span class="sgr32">▆</span>▄▃▄▄▇▅▄▄▃▂▁▂▂▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁ ▂
+  1.21 μs<span class="sgr90">        Histogram: frequency by time</span>        1.27 μs <span class="sgr1">&lt;</span>
+
+ Memory estimate<span class="sgr90">: </span><span class="sgr33">0 bytes</span>, allocs estimate<span class="sgr90">: </span><span class="sgr33">0</span>.
+Overhead due to closure  =  28 ns
+Overhead due to wrapping =  15 ns
+Total overhead           =  43 ns</code></pre><p>This shows that closure and wrapping do introduce a small overhead (tens of ns). However, the benefits of type stability will appear when we start iterating over nodes. To see this consider the following function that evaluates a set of nodes:</p><pre><code class="language-julia hljs">function compute_all!(nodes::Vector{Function})
+    for node in nodes
+        node()
+    end
+end
+function compute_all_wrapped!(nodes::Vector{ComputationGraphs.FunctionWrapper})
+    for node::ComputationGraphs.FunctionWrapper in nodes
+        ComputationGraphs.do_ccall(node)
+    end
+end</code></pre><p>We can use <code>@code_warntype</code> to see how wrapping helps in terms of type stability:</p><pre><code class="language-julia hljs"># using just closure
+nodes_closed=repeat([node_Ax_closed!,node_Axb_closed!],outer=5)
+@show typeof(nodes_closed)
+InteractiveUtils.@code_warntype compute_all!(nodes_closed)
+
+# using closure+wrapped
+nodes_wrapped=repeat([node_Ax_wrapped,node_Axb_wrapped],outer=5)
+@show typeof(nodes_wrapped)
+InteractiveUtils.@code_warntype compute_all_wrapped!(nodes_wrapped)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">typeof(nodes_closed) = Vector{Function}
+MethodInstance for Main.compute_all!(::Vector{Function})
+  from compute_all!(<span class="sgr90">nodes</span>::<span class="sgr1">Vector</span>{Function})<span class="sgr90"> @</span> <span class="sgr90">Main</span> <span class="sgr90"><span class="sgr4">lib_representation.md:229</span></span>
+Arguments
+  #self#<span class="sgr36">::Core.Const(Main.compute_all!)</span>
+  nodes<span class="sgr36">::Vector{Function}</span>
+Locals
+  @_3<span class="sgr91"><span class="sgr1">::Union{Nothing, Tuple{Function, Int64}}</span></span>
+  node<span class="sgr91"><span class="sgr1">::Function</span></span>
+Body<span class="sgr36">::Nothing</span>
+<span class="sgr90">1 ─</span> %1  = nodes<span class="sgr36">::Vector{Function}</span>
+<span class="sgr90">│  </span>       (@_3 = Base.iterate(%1))
+<span class="sgr90">│  </span> %3  = @_3<span class="sgr91"><span class="sgr1">::Union{Nothing, Tuple{Function, Int64}}</span></span>
+<span class="sgr90">│  </span> %4  = (%3 === nothing)<span class="sgr36">::Bool</span>
+<span class="sgr90">│  </span> %5  = Base.not_int(%4)<span class="sgr36">::Bool</span>
+<span class="sgr90">└──</span>       goto #4 if not %5
+<span class="sgr90">2 ┄</span> %7  = @_3<span class="sgr91"><span class="sgr1">::Tuple{Function, Int64}</span></span>
+<span class="sgr90">│  </span>       (node = Core.getfield(%7, 1))
+<span class="sgr90">│  </span> %9  = Core.getfield(%7, 2)<span class="sgr36">::Int64</span>
+<span class="sgr90">│  </span> %10 = node<span class="sgr91"><span class="sgr1">::Function</span></span>
+<span class="sgr90">│  </span>       (%10)()
+<span class="sgr90">│  </span>       (@_3 = Base.iterate(%1, %9))
+<span class="sgr90">│  </span> %13 = @_3<span class="sgr91"><span class="sgr1">::Union{Nothing, Tuple{Function, Int64}}</span></span>
+<span class="sgr90">│  </span> %14 = (%13 === nothing)<span class="sgr36">::Bool</span>
+<span class="sgr90">│  </span> %15 = Base.not_int(%14)<span class="sgr36">::Bool</span>
+<span class="sgr90">└──</span>       goto #4 if not %15
+<span class="sgr90">3 ─</span>       goto #2
+<span class="sgr90">4 ┄</span>       return nothing
+
+typeof(nodes_wrapped) = Vector{ComputationGraphs.FunctionWrapper}
+MethodInstance for Main.compute_all_wrapped!(::Vector{ComputationGraphs.FunctionWrapper})
+  from compute_all_wrapped!(<span class="sgr90">nodes</span>::<span class="sgr1">Vector</span>{ComputationGraphs.FunctionWrapper})<span class="sgr90"> @</span> <span class="sgr90">Main</span> <span class="sgr90"><span class="sgr4">lib_representation.md:234</span></span>
+Arguments
+  #self#<span class="sgr36">::Core.Const(Main.compute_all_wrapped!)</span>
+  nodes<span class="sgr36">::Vector{ComputationGraphs.FunctionWrapper}</span>
+Locals
+  @_3<span class="sgr33"><span class="sgr1">::Union{Nothing, Tuple{ComputationGraphs.FunctionWrapper, Int64}}</span></span>
+  node<span class="sgr36">::ComputationGraphs.FunctionWrapper</span>
+  @_5<span class="sgr36">::ComputationGraphs.FunctionWrapper</span>
+Body<span class="sgr36">::Nothing</span>
+<span class="sgr90">1 ─</span> %1  = nodes<span class="sgr36">::Vector{ComputationGraphs.FunctionWrapper}</span>
+<span class="sgr90">│  </span>       (@_3 = Base.iterate(%1))
+<span class="sgr90">│  </span> %3  = @_3<span class="sgr33"><span class="sgr1">::Union{Nothing, Tuple{ComputationGraphs.FunctionWrapper, Int64}}</span></span>
+<span class="sgr90">│  </span> %4  = (%3 === nothing)<span class="sgr36">::Bool</span>
+<span class="sgr90">│  </span> %5  = Base.not_int(%4)<span class="sgr36">::Bool</span>
+<span class="sgr90">└──</span>       goto #7 if not %5
+<span class="sgr90">2 ┄</span>       Core.NewvarNode(:(node))
+<span class="sgr90">│  </span> %8  = @_3<span class="sgr36">::Tuple{ComputationGraphs.FunctionWrapper, Int64}</span>
+<span class="sgr90">│  </span> %9  = Core.getfield(%8, 1)<span class="sgr36">::ComputationGraphs.FunctionWrapper</span>
+<span class="sgr90">│  </span> %10 = ComputationGraphs.FunctionWrapper<span class="sgr36">::Core.Const(ComputationGraphs.FunctionWrapper)</span>
+<span class="sgr90">│  </span>       (@_5 = %9)
+<span class="sgr90">│  </span> %12 = @_5<span class="sgr36">::ComputationGraphs.FunctionWrapper</span>
+<span class="sgr90">│  </span> %13 = (%12 isa %10)<span class="sgr36">::Core.Const(true)</span>
+<span class="sgr90">└──</span>       goto #4 if not %13
+<span class="sgr90">3 ─</span>       goto #5
+<span class="sgr90">4 ─</span>       Core.Const(:(@_5))
+<span class="sgr90">│  </span>       Core.Const(:(Base.convert(%10, %16)))
+<span class="sgr90">└──</span>       Core.Const(:(@_5 = Core.typeassert(%17, %10)))
+<span class="sgr90">5 ┄</span> %19 = @_5<span class="sgr36">::ComputationGraphs.FunctionWrapper</span>
+<span class="sgr90">│  </span>       (node = %19)
+<span class="sgr90">│  </span> %21 = Core.getfield(%8, 2)<span class="sgr36">::Int64</span>
+<span class="sgr90">│  </span> %22 = ComputationGraphs.do_ccall<span class="sgr36">::Core.Const(ComputationGraphs.do_ccall)</span>
+<span class="sgr90">│  </span> %23 = node<span class="sgr36">::ComputationGraphs.FunctionWrapper</span>
+<span class="sgr90">│  </span>       (%22)(%23)
+<span class="sgr90">│  </span>       (@_3 = Base.iterate(%1, %21))
+<span class="sgr90">│  </span> %26 = @_3<span class="sgr33"><span class="sgr1">::Union{Nothing, Tuple{ComputationGraphs.FunctionWrapper, Int64}}</span></span>
+<span class="sgr90">│  </span> %27 = (%26 === nothing)<span class="sgr36">::Bool</span>
+<span class="sgr90">│  </span> %28 = Base.not_int(%27)<span class="sgr36">::Bool</span>
+<span class="sgr90">└──</span>       goto #7 if not %28
+<span class="sgr90">6 ─</span>       goto #2
+<span class="sgr90">7 ┄</span>       return nothing</code></pre><p>These specific functions <code>compute_all!</code> and <code>compute_all_wrapped!</code> are so simple that type instability actually does not lead to heap allocations, but the use of wrapped functions still leads to slightly faster code.</p><pre><code class="language-julia hljs">@show typeof(nodes_closed)
+bmk3 = @benchmark compute_all!($nodes_closed) evals=1 samples=10000
+
+@show typeof(nodes_wrapped)
+bmk2 = @benchmark compute_all_wrapped!($nodes_wrapped)  evals=1 samples=10000</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">typeof(nodes_closed) = Vector{Function}
+Closure:
+BenchmarkTools.Trial: 10000 samples with 1 evaluation per sample.
+ Range <span class="sgr90">(</span><span class="sgr36"><span class="sgr1">min</span></span> … <span class="sgr35">max</span><span class="sgr90">):  </span><span class="sgr36"><span class="sgr1">6.231 μs</span></span> … <span class="sgr35"> 29.465 μs</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>min … max<span class="sgr90">): </span>0.00% … 0.00%
+ Time  <span class="sgr90">(</span><span class="sgr34"><span class="sgr1">median</span></span><span class="sgr90">):     </span><span class="sgr34"><span class="sgr1">6.321 μs               </span></span><span class="sgr90">┊</span> GC <span class="sgr90">(</span>median<span class="sgr90">):    </span>0.00%
+ Time  <span class="sgr90">(</span><span class="sgr32"><span class="sgr1">mean</span></span> ± <span class="sgr32">σ</span><span class="sgr90">):   </span><span class="sgr32"><span class="sgr1">6.431 μs</span></span> ± <span class="sgr32">880.259 ns</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>mean ± σ<span class="sgr90">):  </span>0.00% ± 0.00%
+
+  ▇<span class="sgr34">█</span>▃<span class="sgr32"> </span>         ▂                                              ▁
+  █<span class="sgr34">█</span>█<span class="sgr32">▅</span>▅▄▃▁▃▄▅▆▃█▅▁▁▃▁▁▄▁▃▄▄▁▁▁▁▁▁▁▃▁▅▅▄▃▃▅▃▁▄▅▃▁▅▃▄▁▃▁▁▁▁▁▁▁▇ █
+  6.23 μs<span class="sgr90">      Histogram: <span class="sgr1">log(</span>frequency<span class="sgr1">)</span> by time</span>      10.8 μs <span class="sgr1">&lt;</span>
+
+ Memory estimate<span class="sgr90">: </span><span class="sgr33">0 bytes</span>, allocs estimate<span class="sgr90">: </span><span class="sgr33">0</span>.
+typeof(nodes_wrapped) = Vector{ComputationGraphs.FunctionWrapper}
+Closure+Wrapping:
+BenchmarkTools.Trial: 10000 samples with 1 evaluation per sample.
+ Range <span class="sgr90">(</span><span class="sgr36"><span class="sgr1">min</span></span> … <span class="sgr35">max</span><span class="sgr90">):  </span><span class="sgr36"><span class="sgr1">5.951 μs</span></span> … <span class="sgr35"> 33.312 μs</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>min … max<span class="sgr90">): </span>0.00% … 0.00%
+ Time  <span class="sgr90">(</span><span class="sgr34"><span class="sgr1">median</span></span><span class="sgr90">):     </span><span class="sgr34"><span class="sgr1">6.152 μs               </span></span><span class="sgr90">┊</span> GC <span class="sgr90">(</span>median<span class="sgr90">):    </span>0.00%
+ Time  <span class="sgr90">(</span><span class="sgr32"><span class="sgr1">mean</span></span> ± <span class="sgr32">σ</span><span class="sgr90">):   </span><span class="sgr32"><span class="sgr1">6.270 μs</span></span> ± <span class="sgr32">941.613 ns</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>mean ± σ<span class="sgr90">):  </span>0.00% ± 0.00%
+
+     <span class="sgr34">█</span> <span class="sgr32"> </span>                                                      
+  ▅▄█<span class="sgr34">█</span>▃<span class="sgr32">▂</span>▂▂▂▂▂▂▂▂▂▂▂▁▁▂▁▂▁▁▂▂▁▁▁▁▁▁▂▁▂▂▂▂▂▁▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ ▂
+  5.95 μs<span class="sgr90">         Histogram: frequency by time</span>        9.82 μs <span class="sgr1">&lt;</span>
+
+ Memory estimate<span class="sgr90">: </span><span class="sgr33">0 bytes</span>, allocs estimate<span class="sgr90">: </span><span class="sgr33">0</span>.</code></pre><h2 id="Conditional-computations"><a class="docs-heading-anchor" href="#Conditional-computations">Conditional computations</a><a id="Conditional-computations-1"></a><a class="docs-heading-anchor-permalink" href="#Conditional-computations" title="Permalink"></a></h2><p>So far we discussed how to compute <em>all nodes</em> or some <em>give vector of nodes</em>. Restricting evaluations to just the set of nodes that <em>need</em> to be recomputed requires introducing some simple logic to the function closures.</p><h3 id="Implementation"><a class="docs-heading-anchor" href="#Implementation">Implementation</a><a id="Implementation-1"></a><a class="docs-heading-anchor-permalink" href="#Implementation" title="Permalink"></a></h3><p>To support need-based evaluations, we use a <code>BitVector</code> to keep track of which nodes have been evaluated. For our 2-node example, we would use</p><pre><code class="language-julia hljs">validValue=falses(2)</code></pre><p>The functions below now include the logic for need-based evaluation:</p><pre><code class="language-julia hljs">node_Ax_conditional_closed() = let validValue=validValue,
+    Ax=Ax , A=A, x=x
+    node_Ax!(Ax,A,x)    # this node&#39;s computation
+    nothing
+    end
+node_Ax_conditional_wrapped = ComputationGraphs.FunctionWrapper(node_Ax_conditional_closed)
+node_Axb_conditional_closed() = let validValue=validValue,
+    Axb=Axb, Ax=Ax, b=b,
+    node_Ax_conditional_wrapped=node_Ax_conditional_wrapped
+    # compute parent node Ax (if needed)
+    if !validValue[1]
+        validValue[1]=true
+         ComputationGraphs.do_ccall(node_Ax_conditional_wrapped)
+    end
+    node_Axb!(Axb,Ax,b)  # this nodes&#39; computation
+    nothing
+    end
+node_Axb_conditional_wrapped = ComputationGraphs.FunctionWrapper(node_Axb_conditional_closed)</code></pre><p>With this logic, we only need a call to evaluate the node <code>A*x+b</code>, as this will automatically trigger the evaluation of <code>A*x</code> (if needed). To check that the logic is working, we do:</p><pre><code class="language-julia hljs">begin # hide
+fill!(validValue,false)
+fill!(Ax,0.0)
+fill!(Axb,0.0)
+ComputationGraphs.do_ccall(node_Ax_conditional_wrapped)
+@assert validValue == [false,false] &quot;no parent computed&quot;
+@assert all(Ax .== A*x)  &quot;should only compute Ax&quot;
+@assert all(Axb .== 0) &quot;should only compute Ax&quot;
+
+fill!(validValue,false)
+fill!(Ax,0.0)
+fill!(Axb,0.0)
+ComputationGraphs.do_ccall(node_Axb_conditional_wrapped)
+@assert validValue == [true,false] &quot;parent should have been computed&quot;
+@assert all(Ax .== A*x)  &quot;should compute both&quot;
+@assert all(Axb .== A*x+b) &quot;should compute both&quot;
+nothing # hide
+end # hide</code></pre><h3 id="Timing-verification"><a class="docs-heading-anchor" href="#Timing-verification">Timing verification</a><a id="Timing-verification-1"></a><a class="docs-heading-anchor-permalink" href="#Timing-verification" title="Permalink"></a></h3><p>We can now check the impact of the new logic on timing.</p><pre><code class="language-julia hljs">using BenchmarkTools, Printf
+@show Threads.nthreads()
+BLAS.set_num_threads(1)
+@show BLAS.get_num_threads()
+@show Base.JLOptions().opt_level
+
+bmk1 = @benchmark begin
+    node_Ax!($Ax,$A,$x)
+    node_Axb!($Axb,$Ax,$b)
+end evals=1000 samples=10000
+
+bmk2a = @benchmark begin
+    ComputationGraphs.do_ccall($node_Ax_wrapped)
+    ComputationGraphs.do_ccall($node_Axb_wrapped)
+end evals=1000 samples=10000
+
+bmk2b = @benchmark begin
+    $validValue[1]=false
+    $validValue[2]=false
+    if !$validValue[2]
+        $validValue[2]=true
+        ComputationGraphs.do_ccall($node_Axb_conditional_wrapped)
+    end
+end evals=1000 samples=10000
+
+bmk3 = @benchmark begin
+    if !$validValue[2]
+        $validValue[2]=true
+        ComputationGraphs.do_ccall($node_Axb_conditional_wrapped)
+    end
+end evals=1 samples=10000
+
+bmk4 = @benchmark begin
+    $validValue[2]=false
+    if !$validValue[2]
+        $validValue[2]=true
+        ComputationGraphs.do_ccall($node_Axb_conditional_wrapped)
+    end
+end evals=1000 samples=10000
+
+@printf(&quot;overhead due to closure+wrapping for full computations          = %+6.f ns\n&quot;,
+    median(bmk2a.times)-median(bmk1.times))
+@printf(&quot;overhead due to closure+wrapping+logic for full computations    = %+6.f ns\n&quot;,
+    median(bmk2b.times)-median(bmk1.times))
+# @printf(&quot;overhead due just to             logic for full computations    = %+6.f ns\n&quot;, # hide
+@printf(&quot;overhead due to closure+wrapping+logic for for computations     = %+6.f ns (&lt;0 means savings)\n&quot;,
+    median(bmk3.times)-median(bmk1.times))
+@printf(&quot;overhead due to closure+wrapping+logic for partial computations = %+6.f ns (&lt;0 means savings)\n&quot;,
+    median(bmk4.times)-median(bmk1.times))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Threads.nthreads() = 2
+BLAS.get_num_threads() = 1
+(Base.JLOptions()).opt_level = 2
+Unconditional computation:
+BenchmarkTools.Trial: 10000 samples with 1000 evaluations per sample.
+ Range <span class="sgr90">(</span><span class="sgr36"><span class="sgr1">min</span></span> … <span class="sgr35">max</span><span class="sgr90">):  </span><span class="sgr36"><span class="sgr1">1.152 μs</span></span> … <span class="sgr35"> 1.846 μs</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>min … max<span class="sgr90">): </span>0.00% … 0.00%
+ Time  <span class="sgr90">(</span><span class="sgr34"><span class="sgr1">median</span></span><span class="sgr90">):     </span><span class="sgr34"><span class="sgr1">1.188 μs              </span></span><span class="sgr90">┊</span> GC <span class="sgr90">(</span>median<span class="sgr90">):    </span>0.00%
+ Time  <span class="sgr90">(</span><span class="sgr32"><span class="sgr1">mean</span></span> ± <span class="sgr32">σ</span><span class="sgr90">):   </span><span class="sgr32"><span class="sgr1">1.188 μs</span></span> ± <span class="sgr32">17.270 ns</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>mean ± σ<span class="sgr90">):  </span>0.00% ± 0.00%
+
+                            █▇▇<span class="sgr34">▅</span>▄▃▄▁                         
+  ▂▃▃▃▃▄▃▂▁▁▂▂▃▂▂▂▁▁▂▂▁▁▁▂▄▅███<span class="sgr34">█</span>████▅▅▄▅▇▄▃▂▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁ ▃
+  1.15 μs<span class="sgr90">        Histogram: frequency by time</span>        1.22 μs <span class="sgr1">&lt;</span>
+
+ Memory estimate<span class="sgr90">: </span><span class="sgr33">0 bytes</span>, allocs estimate<span class="sgr90">: </span><span class="sgr33">0</span>.
+Unconditional computation with wrapping:
+BenchmarkTools.Trial: 10000 samples with 1 evaluation per sample.
+ Range <span class="sgr90">(</span><span class="sgr36"><span class="sgr1">min</span></span> … <span class="sgr35">max</span><span class="sgr90">):  </span><span class="sgr36"><span class="sgr1">5.951 μs</span></span> … <span class="sgr35"> 33.312 μs</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>min … max<span class="sgr90">): </span>0.00% … 0.00%
+ Time  <span class="sgr90">(</span><span class="sgr34"><span class="sgr1">median</span></span><span class="sgr90">):     </span><span class="sgr34"><span class="sgr1">6.152 μs               </span></span><span class="sgr90">┊</span> GC <span class="sgr90">(</span>median<span class="sgr90">):    </span>0.00%
+ Time  <span class="sgr90">(</span><span class="sgr32"><span class="sgr1">mean</span></span> ± <span class="sgr32">σ</span><span class="sgr90">):   </span><span class="sgr32"><span class="sgr1">6.270 μs</span></span> ± <span class="sgr32">941.613 ns</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>mean ± σ<span class="sgr90">):  </span>0.00% ± 0.00%
+
+     <span class="sgr34">█</span> <span class="sgr32"> </span>                                                      
+  ▅▄█<span class="sgr34">█</span>▃<span class="sgr32">▂</span>▂▂▂▂▂▂▂▂▂▂▂▁▁▂▁▂▁▁▂▂▁▁▁▁▁▁▂▁▂▂▂▂▂▁▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ ▂
+  5.95 μs<span class="sgr90">         Histogram: frequency by time</span>        9.82 μs <span class="sgr1">&lt;</span>
+
+ Memory estimate<span class="sgr90">: </span><span class="sgr33">0 bytes</span>, allocs estimate<span class="sgr90">: </span><span class="sgr33">0</span>.
+Conditional computation, but with all valid=false:
+BenchmarkTools.Trial: 10000 samples with 1 evaluation per sample.
+ Range <span class="sgr90">(</span><span class="sgr36"><span class="sgr1">min</span></span> … <span class="sgr35">max</span><span class="sgr90">):  </span><span class="sgr36"><span class="sgr1">5.951 μs</span></span> … <span class="sgr35"> 33.312 μs</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>min … max<span class="sgr90">): </span>0.00% … 0.00%
+ Time  <span class="sgr90">(</span><span class="sgr34"><span class="sgr1">median</span></span><span class="sgr90">):     </span><span class="sgr34"><span class="sgr1">6.152 μs               </span></span><span class="sgr90">┊</span> GC <span class="sgr90">(</span>median<span class="sgr90">):    </span>0.00%
+ Time  <span class="sgr90">(</span><span class="sgr32"><span class="sgr1">mean</span></span> ± <span class="sgr32">σ</span><span class="sgr90">):   </span><span class="sgr32"><span class="sgr1">6.270 μs</span></span> ± <span class="sgr32">941.613 ns</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>mean ± σ<span class="sgr90">):  </span>0.00% ± 0.00%
+
+     <span class="sgr34">█</span> <span class="sgr32"> </span>                                                      
+  ▅▄█<span class="sgr34">█</span>▃<span class="sgr32">▂</span>▂▂▂▂▂▂▂▂▂▂▂▁▁▂▁▂▁▁▂▂▁▁▁▁▁▁▂▁▂▂▂▂▂▁▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ ▂
+  5.95 μs<span class="sgr90">         Histogram: frequency by time</span>        9.82 μs <span class="sgr1">&lt;</span>
+
+ Memory estimate<span class="sgr90">: </span><span class="sgr33">0 bytes</span>, allocs estimate<span class="sgr90">: </span><span class="sgr33">0</span>.
+Conditional computation, with full reuse:
+BenchmarkTools.Trial: 10000 samples with 1 evaluation per sample.
+ Range <span class="sgr90">(</span><span class="sgr36"><span class="sgr1">min</span></span> … <span class="sgr35">max</span><span class="sgr90">):  </span><span class="sgr36"><span class="sgr1">29.000 ns</span></span> … <span class="sgr35"> 9.678 μs</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>min … max<span class="sgr90">): </span>0.00% … 0.00%
+ Time  <span class="sgr90">(</span><span class="sgr34"><span class="sgr1">median</span></span><span class="sgr90">):     </span><span class="sgr34"><span class="sgr1">30.000 ns              </span></span><span class="sgr90">┊</span> GC <span class="sgr90">(</span>median<span class="sgr90">):    </span>0.00%
+ Time  <span class="sgr90">(</span><span class="sgr32"><span class="sgr1">mean</span></span> ± <span class="sgr32">σ</span><span class="sgr90">):   </span><span class="sgr32"><span class="sgr1">32.357 ns</span></span> ± <span class="sgr32">96.627 ns</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>mean ± σ<span class="sgr90">):  </span>0.00% ± 0.00%
+
+      █<span class="sgr34"> </span>           <span class="sgr32"> </span>                                          
+  ▃▁▁▁█<span class="sgr34">▁</span>▁▁▁▄▁▁▁▁▁▁▁<span class="sgr32">▁</span>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▄▁▁▁▂ ▂
+  29 ns<span class="sgr90">           Histogram: frequency by time</span>          41 ns <span class="sgr1">&lt;</span>
+
+ Memory estimate<span class="sgr90">: </span><span class="sgr33">0 bytes</span>, allocs estimate<span class="sgr90">: </span><span class="sgr33">0</span>.
+Conditional computation, with valid=false only for Axb:
+BenchmarkTools.Trial: 10000 samples with 1000 evaluations per sample.
+ Range <span class="sgr90">(</span><span class="sgr36"><span class="sgr1">min</span></span> … <span class="sgr35">max</span><span class="sgr90">):  </span><span class="sgr36"><span class="sgr1"> 98.883 ns</span></span> … <span class="sgr35">181.697 ns</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>min … max<span class="sgr90">): </span>0.00% … 0.00%
+ Time  <span class="sgr90">(</span><span class="sgr34"><span class="sgr1">median</span></span><span class="sgr90">):     </span><span class="sgr34"><span class="sgr1"> 99.705 ns               </span></span><span class="sgr90">┊</span> GC <span class="sgr90">(</span>median<span class="sgr90">):    </span>0.00%
+ Time  <span class="sgr90">(</span><span class="sgr32"><span class="sgr1">mean</span></span> ± <span class="sgr32">σ</span><span class="sgr90">):   </span><span class="sgr32"><span class="sgr1">100.838 ns</span></span> ± <span class="sgr32">  3.906 ns</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>mean ± σ<span class="sgr90">):  </span>0.00% ± 0.00%
+
+  ▂▆█<span class="sgr34">█</span>▆▃▂<span class="sgr32"> </span>                    ▂▄▃▂▁▁                            ▂
+  ███<span class="sgr34">█</span>███<span class="sgr32">█</span>▆▇█▇▇▇▅▅▆▁▃▃▁▁▃▃▄▁▄███████▇▇▆▇▆▆▄▅▄▁▄▃▃▅▅▆▆▇▆▅▆▆▆▄▅▆▄ █
+  98.9 ns<span class="sgr90">       Histogram: <span class="sgr1">log(</span>frequency<span class="sgr1">)</span> by time</span>        115 ns <span class="sgr1">&lt;</span>
+
+ Memory estimate<span class="sgr90">: </span><span class="sgr33">0 bytes</span>, allocs estimate<span class="sgr90">: </span><span class="sgr33">0</span>.
+overhead due to closure+wrapping for full computations          =    +41 ns
+overhead due to closure+wrapping+logic for full computations    =   +142 ns
+overhead due to closure+wrapping+logic for for computations     =  -1158 ns (&lt;0 means savings)
+overhead due to closure+wrapping+logic for partial computations =  -1089 ns (&lt;0 means savings)</code></pre><p>As expected, much time is saved when re-evaluations are not needed. When they are needed, the logic adds a small additional penalty.</p><div class="admonition is-info" id="Note-5684fc2f054e7814"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-5684fc2f054e7814" title="Permalink"></a></header><div class="admonition-body"><p>The code above is the basis for <a href="lib_public.html#ComputationGraphs.generateComputeFunctions">ComputationGraphs.generateComputeFunctions</a>.</p></div></div><h2 id="Parallel-computations"><a class="docs-heading-anchor" href="#Parallel-computations">Parallel computations</a><a id="Parallel-computations-1"></a><a class="docs-heading-anchor-permalink" href="#Parallel-computations" title="Permalink"></a></h2><p>Parallel evaluation are implemented by associating to each computation node one <code>Threads.Task</code> and one pair of <code>Threads.Events</code>. For each computation node <code>i</code>:</p><ul><li>The task <code>task[i]::Threads.Task</code> is responsible carrying out the evaluation of node <code>i</code> and synchronizing it with the other nodes.</li><li>The event <code>request[i]::Threads.Event(autoreset=true)</code> is used to request <code>task[i]</code> to evaluate its node, by issuing <code>notify(request[i])</code>.</li><li>The event <code>valid[i]::Threads.Event(autoreset=false)</code> is used by node <code>i</code> to notify all other nodes that it has finished handling a computation request received through <code>request[i]</code></li></ul><p>The following protocol is used:</p><ul><li><p>All node tasks are spawn simultaneously and each task <code>i</code> immediately waits on <code>request[i]</code> for evaluation request.</p></li><li><p>Upon receiving a request, task <code>i</code> checks which of its parents have valid data:</p><ol><li>For every parent <code>p</code> with missing data, it issues an evaluation request using <code>notify(request[p])</code>.</li><li>After that, the task waits on the requests to be fulfilled by using <code>wait(valid[p])</code> for the same set of parent node.</li></ol></li><li><p>Once all parents have valid data, node <code>i</code> performs its own computation and notifies any waiting child node that its data became valid using <code>notify[valid[i]]</code>.</p></li></ul><p>The operation described above makes the following assumptions:</p><ul><li><p>Any thread that needs the value of node <code>i</code> should first issues an evaluation request using <code>notify(request[i])</code> and then wait for its completion using <code>wait(valid[i])</code>.</p></li><li><p>When the value of a variable <code>v</code> changes, all its children nodes <code>c</code> need to be notified that their values become invalid by issuing <code>reset(valid[c])</code>.</p></li><li><p>To avoid races, these last <code>reset(valid[c])</code> <em>cannot</em> be done while computations are being performed.</p></li></ul><div class="admonition is-warning" id="Warning-b70cab7562ebe36b"><header class="admonition-header">Warning<a class="admonition-anchor" href="#Warning-b70cab7562ebe36b" title="Permalink"></a></header><div class="admonition-body"><p>The last assumption above should be enforced by an explicit locking mechanism, but that has not yet been implemented.</p></div></div><div class="admonition is-warning" id="Warning-e963a97ba366acbe"><header class="admonition-header">Warning<a class="admonition-anchor" href="#Warning-e963a97ba366acbe" title="Permalink"></a></header><div class="admonition-body"><p>For very large matrix multiplications, BLAS makes good use of multiple threads. In this case, we should not expect significant improvements with respect to evaluating the computation graph sequentially. Instead, it is better to allow BLAS to manage all the threads, with a sequential evaluation of the computation graph.</p></div></div><h3 id="Parallelism-implementation"><a class="docs-heading-anchor" href="#Parallelism-implementation">Parallelism implementation</a><a id="Parallelism-implementation-1"></a><a class="docs-heading-anchor-permalink" href="#Parallelism-implementation" title="Permalink"></a></h3><p>We will illustrate the mechanism above with the computation of <code>A*x+B*y</code> for which the two multiplications can be parallelized. The corresponding graph has</p><ul><li>three nodes <code>A</code>,<code>x</code>,<code>B</code>,<code>y</code> that corresponds to variables; and</li><li>three computation nodes, two for each of the multiplications and the other for the addition.</li></ul><p>We start by pre-allocating memory for all nodes</p><pre><code class="language-julia hljs">using Random
+A = rand(Float64,4000,3000)
+x = rand(Float64,3000,1000)
+B = rand(Float64,4000,2500)
+y = rand(Float64,2500,1000)
+Ax = Matrix{Float64}(undef,4000,1000)
+By = similar(Ax)
+AxBy = similar(Ax)</code></pre><p>and defining the computations for each node</p><pre><code class="language-julia hljs">using LinearAlgebra
+function node_Ax!(out::Matrix{F},in1::Matrix{F}, in2::Matrix{F}) where {F}
+    mul!(out,in1,in2)
+end
+function node_By!(out::Matrix{F},in1::Matrix{F}, in2::Matrix{F}) where {F}
+    mul!(out,in1,in2)
+end
+function node_AxBy!(out::Matrix{F},in1::Matrix{F}, in2::Matrix{F}) where {F}
+    @. out = in1 + in2
+end</code></pre><p>We used fairly big matrices for which the computation takes some time, as we can see below:</p><pre><code class="language-julia hljs">@show Threads.nthreads()
+BLAS.set_num_threads(1)
+@show BLAS.get_num_threads()
+@show Base.JLOptions().opt_level
+
+@time begin
+    node_Ax!(Ax,A,x)
+    node_By!(By,B,y)
+    node_AxBy!(AxBy,Ax,By)
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Threads.nthreads() = 2
+BLAS.get_num_threads() = 1
+(Base.JLOptions()).opt_level = 2
+  0.932706 seconds</code></pre><p>To implement the parallelization mechanism described above we need 2 event-triggered objects per node:</p><pre><code class="language-julia hljs">valid=Tuple(Threads.Event(false) for _ in 1:3)
+request=Tuple(Threads.Event(true) for _ in 1:3)
+reset.(valid)
+reset.(request)</code></pre><p>The computation tasks can then be launched using</p><pre><code class="language-julia hljs">tasks=[
+    Threads. @spawn while true
+        wait(request[1])
+        if !valid[1].set
+            node_Ax!(Ax,A,x)    # this node&#39;s computation
+            notify(valid[1])
+        end
+    end
+
+    Threads. @spawn while true
+        wait(request[2])
+        if !valid[2].set
+            node_By!(By,B,y)    # this node&#39;s computation
+            notify(valid[2])
+        end
+    end
+
+    Threads.@spawn while true
+        wait(request[3])
+        if !valid[3].set
+            valid[1].set || notify(request[1])
+            valid[2].set || notify(request[2])
+            valid[1].set || wait(valid[1])
+            valid[2].set || wait(valid[2])
+            node_AxBy!(AxBy,Ax,By)  # this node&#39;s computation
+            notify(valid[3])
+        end
+    end
+]</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">3-element Vector{Task}:
+ Task (runnable, started) @0x00007f048398f3a0
+ Task (runnable, started) @0x00007f048398f530
+ Task (runnable, started) @0x00007f048398f6c0</code></pre><div class="admonition is-info" id="Note-fec4cd756b38f877"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-fec4cd756b38f877" title="Permalink"></a></header><div class="admonition-body"><p>Very similar code is used in <a href="lib_public.html#ComputationGraphs.computeSpawn!">computeSpawn!</a> to parallelize the computation of general graphs.</p></div></div><h3 id="Parallelism-verification"><a class="docs-heading-anchor" href="#Parallelism-verification">Parallelism verification</a><a id="Parallelism-verification-1"></a><a class="docs-heading-anchor-permalink" href="#Parallelism-verification" title="Permalink"></a></h3><p>To verify the operation of the approaches outlined above, we make a request for the value of the final node <code>A*x+B*y</code> and wait on the node being valid:</p><pre><code class="language-julia hljs">using ThreadPinning
+pinthreads(:cores)
+@show Threads.nthreads()
+BLAS.set_num_threads(1)
+@show BLAS.get_num_threads()
+@show Base.JLOptions().opt_level
+
+fill!(Ax,0.0)
+fill!(By,0.0)
+fill!(AxBy,0.0)
+reset.(valid)
+println(&quot;valid before :&quot;,getproperty.(valid,:set))
+@time begin
+    notify(request[3])
+    wait(valid[3])
+end
+println(&quot;valid after  :&quot;,getproperty.(valid,:set))
+@assert Ax==A*x
+@assert By==B*y
+@assert AxBy==A*x+B*y</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Threads.nthreads() = 2
+BLAS.get_num_threads() = 1
+(Base.JLOptions()).opt_level = 2
+valid before :(false, false, false)
+  0.511647 seconds (9 allocations: 416 bytes)
+valid after  :(true, true, true)</code></pre><p>When multiple hardware threads are available, the time reported by <code>@time</code> is roughly about half, showing a good use of the threads.</p><div class="admonition is-info" id="Note-459641b6f8021182"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-459641b6f8021182" title="Permalink"></a></header><div class="admonition-body"><p>We can see whether the julia threads were successfully &quot;pinned&quot; to physical hardware threads using <code>ThreadPinning.threadinfo()</code>, where <em>red</em> means that multiple julia threads are running on the same hardware thread and <em>purple</em> means that the julia thread is really running on a hyperthread. In either case, we should not expect true parallelism. This is often the case when code is run through a GitHub action (as in generating this manual page) on a computer with a single core with Simultaneous Multithreading (SMT).</p><pre><code class="language-julia hljs">using ThreadPinning
+@show Threads.nthreads()
+@show pinthreads(:cores)
+threadinfo()</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Threads.nthreads() = 2
+pinthreads(:cores) = nothing
+Hostname: 	runnervmf4ws1
+CPU(s): 	1 x AMD EPYC 7763 64-Core Processor
+CPU target: 	znver3
+Cores: 		2 (4 CPU-threads due to 2-way SMT)
+NUMA domains: 	1 (2 cores each)
+
+<span class="sgr32"><span class="sgr1">Julia threads: 	2</span></span>
+
+<span class="sgr36"><span class="sgr1">CPU socket 1</span></span>
+  <span class="sgr33"><span class="sgr1">0</span></span>,<span class="sgr90">1</span>, <span class="sgr33"><span class="sgr1">2</span></span>,<span class="sgr90">3</span>
+
+
+<span class="sgr33"><span class="sgr1">#</span></span> = Julia thread, <span class="sgr95"><span class="sgr1">#</span></span> = Julia thread on HT, <span class="sgr31"><span class="sgr1">#</span></span> = &gt;1 Julia thread
+
+<span class="sgr90">(Mapping: 1 =&gt; 0, 2 =&gt; 2,</span>)</code></pre></div></div></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="examples.html">« Examples</a><a class="docs-footer-nextpage" href="lib_public.html">API »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Friday 12 September 2025 06:14">Friday 12 September 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
